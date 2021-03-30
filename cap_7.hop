@@ -1,0 +1,339 @@
+! Capítulo 7 – Listas quase "infinitas", mas limitadas
+! ====================================================
+
+uses cap_6;
+
+! Enquanto a linguagem Haskell opera com o conceito de listas infinitas,
+! sem que seja necessário preocupar-se com seu limite de geração na
+! memória o mesmo não se pode dizer da linguagem Hope. 
+!
+! Em Hope a geração de listas infinitas poderá ser realizada numa 
+! faixa muito curta.  A quantidade máxima de elementos em uma lista é de
+! aproximadamente 280.000.  Por questões de segurança, para evitar
+! estouro de memória e encerramento inesperado do ambiente de
+! interpretação do código é aconselhável trabalhar com listas infinitas
+! limitadas até 140.000. Apesar dessa limitação, isso não prejudica a
+! aprendizagem do conceito, a ideia, de lista infnitas. Lista infinitas
+! em Haskell são definidas a partir da sintaxe [1..] e em Hope será
+! definida a partir da função from(1) do módulo mylist.hop. 
+!
+! O uso de aspas na representação de listas infinitas em Hope refere-se 
+! ao fato de nesta linguagem esse efeito ser uma ação simulada. 
+!
+! Um detalhe importante é que a maioria das funções deste capítulo usam 
+! estruturas de dados do tipo num. Em alguns casos se mantém o uso do tipo 
+! alpha.
+!
+! Em relação as operações com números primos o recurso de geração desses
+! valores está limitado a operar valor primos entre 2 e 5591. Valores
+! maiores ocasionam estouro de memória. No entanto, essa limitação não
+! afeta em absoluto o estudo dos exercícios retratados nesta obra.
+
+! 7.1 - Lista "infinita" obtida a partir da repetição de um único elemento
+! ========================================================================
+
+! (Exercício 7.1.1) Definir por compreensão a função repete tal que
+! repete(n) seja uma lista infinita cujos elementos são n. Por exemplo,
+!    repete(5)         = [5,5,5,5,5,5,5,...]
+!    take(3,repete(5)) = [5,5,5]
+
+repete : num -> list num;
+repete n <= compNum (\x => n, from 1);
+
+! (Exercício 7.1.2) Definir por recursão a função repeteFinito tal que
+! repeteFinito(n,x) seja uma lista de n elementos iguais a x. Por
+! exemplo,
+!    repeteFinito(3,5) = [5,5,5]
+
+repeteFinito : num # num -> list num;
+repeteFinito (0, x) <= [];
+repeteFinito (n, x) <= x :: repeteFinito (n - 1, x);
+
+! (Exercício 7.1.3) Definir usando a função repete e take a função
+! repeteFinito' tal que repeteFinito'(n,x) seja uma lista de n elementos
+! iguais a x. Por exemplo,
+!    repeteFinito'(3,5) = [5,5,5]
+
+repeteFinito' : num # num -> list num;
+repeteFinito' (n, x) <= take (n, repete x);
+
+! 7.2 - Potências de um número menor que um limite estabelecido
+! =============================================================
+
+! (Exercício 7.2.1) Definir usando takeWhile', map e pow a função
+! potenciasMenores tal que potenciasMenores(x,y) seja a lista das
+! potências de x menores que y. Por exemplo,
+!    potenciasMenores(2,1000) = [2,4,8,16,32,64,128,256,512]
+!    potenciasMenores(4,1000) = [4,16,64,256]
+
+potenciasMenores : num # num -> list num;
+potenciasMenores (x, y) <= takeWhile' ((< y), map (from 1, \a => pow (x, a)));
+
+! 7.3 - Agrupamento de elementos consecutivos
+! ===========================================
+
+! (Exercício 7.3.1) Definir usando recursão a função agrupa tal que
+! agrupa(n,[xs]) seja a lista formada pelas listas de n elementos
+! consecutivos da lista xs, exceto possivelmente a última lista que
+! poder ter menos de n elementos. Por exemplo,
+!    agrupa(2,[3,1,5,8,2,7])   = [[3,1],[5,8],[2,7]]
+!    agrupa(3,[3,1,5,8,2,7])   = [[3,1,5],[8,2,7]]
+!    agrupa(2,[3,1,5,8,2,7,9]) = [[3,1],[5,8],[2,7],[9]]
+
+agrupa : num # list num -> list (list num);
+agrupa (n, []) <= [];
+agrupa (n, xs) <= take (n, xs) :: agrupa (n, drop (n, xs));
+
+! 7.4 - Conjectura de Collatz
+! ===========================
+
+! A operação a seguir é considerada aplicável a qualquer número inteiro
+! positivo: + se o número for par, divide-se o número por 2; + se o
+! número for ímpar, multiplica-se o número por 3 e em seguida soma-se 1.
+! A conjectura de Collatz, também chamada de problema 3n + 1, estabelece
+! uma sequência numérica (ou trajetória) que a partir de um número
+! natural inicial obedece as duas condições anteriores. Por exemplo, a
+! trajetória de 13 é 13, 40, 20, 10, 5, 16, 8, 4, 2, 1, 4, 2, 1
+! infinitamente. Se olharmos para este exemplo, a trajetória de 13 é
+! periódica, isto é, se repete indefinidamente a partir de um
+! determinado momento. A conjectura de Collatz diz que sempre deve-se
+! atingir o número 1 para qualquer número com o qual se começar a
+! trajetória. Exemplos:
+! + com n = 6, ter-se-á os números 6, 3, 10, 5, 16, 8, 4, 2, 1;
+! + com n = 11, ter-se-á os números 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2, 1;
+! + com n = 27, a sucessão possui 112 passos chegando a 9232 antes de
+!   chegar a 1, com a sequência de números 27, 82, 41, 124, 62, 31, 94,
+!   47, 142, 71, 214, 107, 322, 161, 484, 242, 121, 364, 182, 91, 274,
+!   137, 412, 206, 103, 310, 155, 466, 233, 700, 350, 175, 526, 263,
+!   790, 395, 1186, 593, 1780, 890, 445, 1336, 668, 334, 167, 502, 251,
+!   754, 377, 1132, 566, 283, 850, 425, 1276, 638, 319, 958, 479, 1438,
+!   719, 2158, 1079, 3238, 1619, 4858, 2429, 7288, 3644, 1822, 911,
+!   2734, 1367, 4102, 2051, 6154, 3077, 9232, 4616, 2308, 1154, 577,
+!   1732, 866, 433, 1300, 650, 325, 976, 488, 244, 122, 61, 184, 92, 46,
+!   23, 70, 35, 106, 53, 160, 80, 40, 20, 10, 5, 16, 8, 4, 2, 1
+
+! (Exercício 7.4.1) Definir a função seguinte tal que seguinte(n) seja o
+! número seguinte na trajetória de Collatz. Por exemplo,
+!    seguinte(13) = 40
+!    seguinte(40) = 20
+
+seguinte : num -> num;
+seguinte n <= if even n
+              then n div 2
+              else 3 * n + 1;
+
+! (Exercício 7.4.2) Definir por recursão a função collatz tal que
+! collatz(n) seja a definição da trajetória de Collatz de n até 1. Por
+! exemplo,
+!    collatz(13) = [13,40,20,10,5,16,8,4,2,1]
+
+collatz : num -> list num;
+collatz 1 <= [1];
+collatz n <= n :: collatz (seguinte n);
+
+! (Exercício 7.4.3) Definir a função menorCollatzMaior tal que
+! [menorCollatzMaior(n);] é o menor número cuja trajetória de Collatz
+! tem mais de n elementos. Por exemplo,
+!    menorCollatzMaior(100) = 27
+
+menorCollatzMaior : num -> num;
+menorCollatzMaior x <= head (filter (\y => length (collatz y) > x,
+                             from 1));
+
+! (Exercício 7.4.4) Definir a função menorCollatzSupera tal que
+! menorCollatzSupera(n) seja o menor número cuja trajetória de Collatz
+! tem algum elemento maior que n. Por exemplo,
+!    menorCollatzSupera(100) = 15
+
+menorCollatzSupera : num -> num;
+menorCollatzSupera x <= head (filter (\y => maximum (collatz y) > x,
+                              from 1));
+
+! 7.5 - Lista com números primos
+! ==============================
+
+! Entre os métodos e algoritmos existentes para a obtenção de números
+! primos um, considerado simples, se destaca imensamente sendo conhecido
+! como: Crivo de Eratóstenes. Este método permite encontrar facilmente
+! números primos até certo limite previamente estabelecido a partir da
+! eliminação dos números que não são primos no limite fixado.
+!
+! Devido a limitações da linguagem Hope o maior limite a ser usado para
+! a geração de números primos segundo o algoritmo do Crivo de
+! Eratóstenes é 5591, lembrando que Hope opera de forma muito limitada
+! com o conceito de listas infinitas.
+!
+! O método baseia-se na criação de lista iniciada no número 2 e
+! encerrada no valor limite estabelecido. Para este recurso use (2..n)
+! estabelecido no módulo mylist.hop.
+!
+! Após o estabelecimento da lista basta encontrar todos os múltiplos do
+! número 2, exceto o número 2, e remove-los da lista. O próximo número
+! da lista após o primo anterior (número 2) é primo, ou seja, o número
+! 3. Repita a mesma ação removendo todos os múltiplos do número 3,
+! exceto o 3. O próximo número primo da lista é 5, remova os múltiplos
+! do número 5, exceto o 5 e assim por diante até chegar ao último
+! elemento da lista.
+!
+! Para remover múltiplos de um número de uma lista considere a função
+! eliminar, tal que eliminar(n,[xs]) remove de uma lista xs os
+! múltiplos do número n a partir do apoio de uma ação de filtragem.
+
+eliminar : num # list num -> list num;
+eliminar (n, []) <= [];
+eliminar (n, xs) <= filter (\x => x mod n /= 0, xs);
+
+! A partir da definição de uma função que efetue a remoção de múltiplos
+! de certo número de uma lista é necessário passar a função que deverá
+! aplicar o crivo de remoção a partir de cada número que compões a
+! lista.
+!
+! Observe a função crivo, tal que [crivo([xs]);] efetue a remoção da
+! lista dos números que não são primos deixando ao final apenas os
+! elemento que são primos.
+
+crivo : list num -> list num;
+crivo []        <= [];
+crivo (n :: ns) <= n :: crivo (eliminar (n, ns));
+
+! (Exercício 7.5.1) Definir a constante primos tal que primos seja a
+! apresentação de uma lista de números primos dentro do limite máximo
+! permitido na linguagem. Por exemplo,
+!    take(10,primos) = [2,3,5,7,11,13,17,19,23,29]
+
+primos : list num;
+primos <= crivo (2 .. 5591);
+
+! (Exercício 7.5.2) Definir a função primo tal que primo(x) verifique
+! se x é primo. Por exemplo,
+!    primo(7) = true
+!    primo(8) = false
+
+primo : num -> truval;
+primo x <= x = head (dropWhile' ((< x), primos));
+
+! 7.6 - Soma dos números primos truncados
+! =======================================
+
+! Um número primo é truncado se os números obtidos pela eliminação de
+! algarismos da direita para a esquerda são primos. Por exemplo, 599 é
+! um número primo truncado, pois 599, 59 e 5 são primos. O número 577 é
+! primo não truncado, pois 57 não é primo.
+
+! (Exercício 7.6.1) Definir a função primoTruncado tal que
+! primoTruncado(x) verifique se x é primo truncado. Por exemplo,
+!    primoTruncado(599) = true
+!    primoTruncado(577) = false
+
+primoTruncado : num -> truval;
+primoTruncado x <= if x < 10
+                   then primo x
+                   else primo x and primoTruncado (x div 10);
+
+! (Exercício 7.6.2) Definir a função somaPrimosTruncados tal que
+! somaPrimosTruncados (n) seja a soma dos n primos truncados. Por
+! exemplo,
+!    somaPrimosTruncados(10) = 249
+
+somaPrimosTruncados : num -> num;
+somaPrimosTruncados n <= sum (take (n,filter (primoTruncado, primos)));
+
+! (Exercício 7.6.3) Calcular a soma dos 20 primos truncados.
+!    somaPrimosTruncados(20) = 2551
+
+! 7.7 - Soma dos números primos menores que "n"
+! =============================================
+
+! (Exercício 7.7.1) Definir a função somaPrimosMenores tal que
+! somaPrimosMenores(n) seja a soma dos números primos menores que
+! n. Por exemplo,
+!    somaPrimosMenores(10) = 17
+! Para solucionar esta operação é necessário a definição de uma função que 
+! efetue a soma dos números menores que “n”. Assim sendo, defina por recursão 
+! a função somaMenores tal que somaMenores(n) seja a soma dos números 
+! menores que “n”.
+
+somaMenores : num # list num # num -> num;
+somaMenores (n, x :: xs, a) <= if n =< x 
+                               then a 
+                               else somaMenores (n, xs, a + x);
+
+! A partir da função somaMenores basta desenvolver a função somaPrimosMenores 
+! para realizar a soma dos números primos menores que “n”. Use para esta ação 
+! as funções pri-mos e somaMenores desenvolvidas anteriormente.
+
+somaPrimosMenores : num -> num;
+somaPrimosMenores n <= somaMenores (n, primos, 0);
+
+! (Exercício 7.7.2) Definir a função somaPrimosMenores' tal que
+! somaPrimosMenores'(n) seja a soma dos números primos menores que
+! na partir do apoio das funções takeWhile’, sum e primos. Por exemplo,
+!    somaPrimosMenores(10) = 17
+
+somaPrimosMenores' : num -> num;
+somaPrimosMenores' n <= sum (takeWhile' ((< n), primos));
+
+! 7.8 - A bicicleta de Turing
+! ===========================
+
+! Reza a lenda que Alan Turing tinha uma bicicleta velha. A bicicleta
+! tinha uma corrente com um elo fraco e um dos raios da roda
+! torto. Quando o raio torto e o elo fraco da corrente se encontravam a
+! corrente rompia.
+
+! A bicicleta é identificada pelos parâmetros (i, d, n) em que:
+! + i é o número do elo que coincide com o raio torto após começar a andar;
+! + d é o número de elos percorrido a cada evolução da roda;
+! + n é a quantidade de elos da corrente, sendo n o elo mais fraco.
+!
+! Se i = 2, d = 7 e n = 25 então a lista com a indicação do elo que
+! coincide com o raio torto a cada volta é:
+!    [2,9,16,23,5,12,19,1,8,15,22,4,11,18,0,7,14,21,3,10,17,24,6, ...]
+!
+! A partir dos parâmetros (i = 2, d = 7, n = 25) fornecidos, sabe-se que
+! a corrente quebrará no momento em que o número de voltas atingir
+! 14. Veja a comprovação.
+
+! (Exercício 7.8.1) Definir a função elos tal que elos(i,d,n) seja a
+! lista com o número da volta que atingem o raio torto a cada evolução
+! da roda de uma bicicleta do tipo (i,d,n). Por exemplo,
+!    take(10,elos(2,7,25)) = [2,9,16,23,5,12,19,1,8,15]
+
+elos : num # num # num -> list num;
+elos (i, d, n) <= map (from 0, \j => (i + d * j) mod n);
+
+! (Exercício 7.8.2) Definir a função numeroDeVoltas tal que
+! numeroDeVoltas(i,d,n) seja a quantidade de voltas dadas até que a
+! corrente se rompa em uma bicicleta do tipo (i,d,n). Por exemplo,
+!    numeroDeVoltas(2,7,25) = 14
+
+numeroDeVoltas : num # num # num -> num;
+numeroDeVoltas (i, d, n) <= length (takeWhile' ((/= 0), elos (i, d, n)));
+
+! 7.9 - Mais fatoriais
+! ====================
+
+! (Exercício 7.9.1) Definir a função fatoriais tal que fatoriais
+! apresente os fatoriais dos números naturais tendendo ao infinito. Por
+! exemplo,
+!    take(7,fatoriais) = [1,1,2,6,24,120,720]
+
+fatoriais : list num;
+fatoriais <= map (from 0, fatorial);
+
+! (Exercício 7.9.2) Definir a função ehFatorial tal que [ehFatorial(m)]
+! verifique se dado um número natural m este é o resultado de um valor
+! obtido a partir do cálculo de um fatorial. Por exemplo,
+!    ehFatorial(120) = true
+!    ehFatorial(20)  = false
+
+ehFatorial : num -> truval;
+ehFatorial m <= m = head (dropWhile' ((< m), fatoriais));
+
+! (Exercício 7.9.3) Definir a função posicoesDasFatoriais tal que
+! posicoesDasFatoriais(m) seja a lista dos fatoriais com suas
+! posições. Por exemplo,
+!    take(4,posicoesDasFatoriais) = [(0,1),(1,1),(2,2),(3,6)]
+
+posicoesDasFatoriais : list (num # num);
+posicoesDasFatoriais <= zip (from 0, fatoriais);

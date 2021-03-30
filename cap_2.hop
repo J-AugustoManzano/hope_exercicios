@@ -1,0 +1,581 @@
+uses mylist;
+
+! (Exercício 2.1.1) Definir a função 
+!    media3 : num # num # num -> num;
+! tal que somaMoedas(a, b, c, d, e) seja a soma em reais (R$) correspondentes 
+! aos valores: “a” para R$ 1,00, “b” para R$ 2,00, “c” para R$ 5,00, “d” para 
+! R$ 10 ,00 e “e” para R$ 20,00. Por exemplo,
+!    media3(1,3,8)   = 4
+!    media3(0–1,0,7) = 2
+!    media3(0–3,0,3) = 0
+
+media3 : num # num # num -> num;
+media3 (x, y, z) <= (x + y + z) / 3;
+
+! (Exercício 2.2.1) Definir a função 
+!    somaMoedas : num # num # num # num # num -> num;
+! tal que somaMoedas(a, b, c, d, e) seja a soma em reais (R$) correspondentes 
+! aos valores: “a” para R$ 1,00, “b” para R$ 2,00, “c” para R$ 5,00, “d” para 
+! R$ 10 ,00 e “e” para R$ 20,00. Por exemplo,
+!    somaMoedas(0,0,0,0,1) = 20
+!    somaMoedas(0,0,8,0,3) = 100
+!    somaMoedas(1,1,1,1,1) = 38
+
+somaMoedas : num # num # num # num # num -> num;
+somaMoedas (a, b, c, d, e) <= 1 * a + 2 * b + 5 * c + 10 * d + 20 * e;
+
+! (Exercício 2.3.1) Definir a função
+!    volumeEsfera : num -> num
+! tal que volumeEsfera(r) seja o volume da esfera de raio r. Por exemplo,
+!    volumeEsfera(10)  = 4188.79020478639
+!    volumeEsfera(5)   = 523.598775598299
+!    volumeEsfera(6.5) = 1150.34650998946
+! Indicação: Usar valor do pi a partir da operação - acos(0) * 2.
+
+volumeEsfera : num -> num;
+volumeEsfera r <= 4 / 3 * pi * pow (r, 3);
+
+! (Exercício 2.4.1) Definir a função
+!    areaDeCoroaCircular : num # num -> num
+! tal que areaDeCoroaCircular(r1,r2) seja a área de uma coroa circular
+! de raio interno r1 e raio externo r2. Por exemplo,
+!    areaDeCoroaCircular(1,2) = 9.42477796076938
+!    areaDeCoroaCircular(2,5) = 65.9734457253857
+!    areaDeCoroaCircular(3,5) = 50.2654824574367
+
+areaDeCoroaCircular : num # num -> num;
+areaDeCoroaCircular (r1, r2) <= pi * (pow (r2, 2) - pow (r1, 2));
+
+! (Exercício 2.5.1) Definir a função
+!    ultimoDigito : num -> num
+! tal que ultimoDigito(x) seja o último dígito do número x. Por exemplo,
+!       ultimoDigito(325) = 5
+!       ultimoDigito(128) = 8
+!       ultimoDigito(15)  = 5
+
+ultimoDigito : num -> num;
+ultimoDigito x <= x mod 10;
+
+! (Exercício 2.6.1) Definir a função maxTres
+!    maxTres : num # num # num -> num;
+! tal que maxTres(x,y,z) seja o máximo de x, y e z. Por exemplo,
+!       maxTres(6,2,4) = 6
+!       maxTres(6,7,4) = 7
+!       maxTres(6,7,9) = 9
+
+maxTres : num # num # num -> num;
+maxTres (x, y, z) <= max (x, max (y, z));
+
+! (Exercício 2.7.1) A disjunção exclusiva “xor” de duas condições é
+! verificada se uma é verdadeira e a outra é falsa.
+!
+! Definir a função
+!    xor1 : truval # truval -> truval;
+! que calcule a disjunção exclusiva da tabela verdade. Use 4 equações,
+! uma para cada linha da tabela. Por exemplo,
+!    xor1(1=1,2=2) = false
+!    xor1(1=1,1=2) = true
+!    xor1(1=2,2=2) = true
+!    xor1(1=2,2=1) = false
+
+xor1 : truval # truval -> truval;
+xor1 (true,  true)  <= false;
+xor1 (true,  flase) <= true;
+xor1 (false, true)  <= true;
+xor1 (false, false) <= false;
+
+! (Exercício 2.7.2) Definir a função
+!    xor2 : truval # truval -> truval
+! que calcule a disjunção exclusiva da tabela verdade e uso de
+! padrões. Use 2 equações, uma para cada valor do primeiro argumento.
+
+xor2 : truval # truval -> truval;
+xor2 (true, y)  <= not y;
+xor2 (false, y) <= y;
+
+! (Exercício 2.7.3) Definir a função
+!    xor3 : truval # truval -> truval;
+! xor3 que calcule a disjunção exclusiva da tabela verdade a partir da
+! disjunção (or), conjunção (and) e negação (not). Use 1 equação.
+
+xor3 : truval # truval -> truval;
+xor3 (x, y) <= (x or y) and not (x and y);
+
+! (Exercício 2.7.4) Definir a função
+!    xor4 : truval # truval -> truval;
+! que calcule a disjunção exclusiva da tabela verdade a partir da
+! desigualdade (/=). Use 1 equação.
+
+xor4 : truval # truval -> truval;
+xor4 (x, y) <= x /= y;
+
+! (Exercício 2.8.1) Definir a função rota
+!    rota : list num -> list num
+! tal que rota(xs) seja a lista obtida colocando o primeiro elemento de
+! xs no final da lista. Por exemplo,
+!    rota([3,2,5,7]) = [2,5,7,3]
+!    rota([9,7,6,5]) = [7,6,5,9]
+!    rota([8,2,9,7]) = [2,9,7,8]
+
+rota : list num -> list num;
+rota xs <= tail xs <> [head xs];
+
+! (Exercício 2.8.2) Definir a função
+!    rota' : num # list num -> list num
+! tal que rota'(n,xs) seja a lista obtida colocando os primeiros n
+! elementos de xs no final da lista. Por exemplo,
+!    rota'(1,[3,2,5,7]) = [2,5,7,3]
+!    rota'(2,[3,2,5,7]) = [5,7,3,2]
+!    rota'(3,[3,2,5,7]) = [7,3,2,5]
+
+rota' : num # list num -> list num;
+rota' (n, xs) <= drop (n, xs) <> take (n, xs);
+
+! (Exercício 2.9.1) Definir a função
+!    mostraMenorMaior : list num -> list num
+! tal que mostraMenorMaior(xs) seja a lista formada pelo menor e
+! maior elementos de xs. Por exemplo,
+!    mostraMenorMaior([3,2,7,5]) = [2,7]
+!    mostraMenorMaior([9,7,6,5]) = [5,9]
+!    mostraMenorMaior([8,2,6,7]) = [2,8]
+
+mostraMenorMaior : list num -> list num;
+mostraMenorMaior xs <= [minimum xs, maximum xs];
+
+! (Exercício 2.10.1) Definir a função
+!    palindromo : list num -> truval
+! tal que palindromo(xs) verifica se xs é um palíndromo, ou seja, se
+! ler xs da esquerda para a direita é o mesmo que ler da direita para
+! a esquerda. Por exemplo,
+!    palindromo([3,2,5,2,3])   = true
+!    palindromo([3,2,5,6,2,3]) = false
+
+palindromo : list num -> truval;
+palindromo xs <= xs = reverse xs;
+
+! (Exercício 2.11.1) Definir a função
+!    interior : list num -> list num
+! tal que interior(xs) seja a lista obtida eliminado os extremos da lista
+! xs. Por exemplo,
+!    interior([2,5,3,7,3]) = [5,3,7]
+!    interior(2..7)        = [3,4,5,6]
+
+interior : list num -> list num;
+interior xs <= tail (init xs);
+
+! (Exercício 2.12.1) Definir a função
+!    final : num # list num -> list num;
+! final(n,xs) seja a lista formada pelos n finais elementos de xs. Por
+! exemplo,
+!    final(3,[2,5,4,7,9,6]) = [7,9,6]
+!    final(2,[2,5,4,7,9,6]) = [9,6]
+
+final : num # list num -> list num;
+final (n, xs) <= drop (length xs - n, xs);
+
+! (Exercício 2.13.1) Definir a função
+!    segmento : num # num # list num -> list num
+! tal que segmento(m,n,xs) seja a lista dos elementos de xs compreendidos
+! entre as posições m e n. Por exemplo,
+!    segmento(3,4,[3,4,1,2,7,9,0]) = [1,2]
+!    segmento(3,5,[3,4,1,2,7,9,0]) = [1,2,7]
+!    segmento(5,3,[3,4,1,2,7,9,0]) = nil
+
+segmento : num # num # list num -> list num;
+segmento (m, n, xs) <= drop (m - 1, take (n, xs));
+
+! (Exercício 2.14.1) Definir a função
+!    extremos : num # list num -> list num
+! tal que extremos(n,xs) seja a lista formada pelos n primeiros elementos
+! de xs e os n finais elementos de xs. Por exemplo,
+!    extremos(3,[2,6,7,1,4,5,8,9,3]) = [2,6,7,8,9,3]
+!    extremos(2,[2,6,7,1,4,5,8,9,3]) = [2 6,9,3]
+
+extremos : num # list num -> list num;
+extremos (n, xs) <= take (n, xs) <> drop (length xs - n, xs);
+
+! (Exercício 2.15.1) Definir a função
+!    mediana : num # num # num -> num
+! tal que mediana(x,y,z) seja o número mediano dos três números x, y e
+! z. Por exemplo,
+!    mediana(3,2,5) = 3
+!    mediana(2,4,5) = 4
+!    mediana(2,6,5) = 5
+!    mediana(2,6,6) = 6
+
+! Solução 1:
+mediana : num # num # num -> num;
+mediana (x, y, z) <= x + y + z - minimum ([x, y, z]) - maximum ([x, y, z]);
+
+! Solução 2:
+mediana' : num # num # num -> num;
+mediana' (x, y, z) <= if a >= x and x >= b then x else
+                      if a >= y and y >= b then y else x + y + z - a - b
+                      where a == minimum ([x, y, z])
+                      where b == maximum ([x, y, z]);
+
+! (Exercício 2.16.1) Definir a função
+!    tresIguais : num # num # num -> truval
+! tal que tresIguais(x,y,z) verifique se os elementos x, y e z são
+! iguais. Por exemplo,
+!    tresIguais(4,4,4) = true
+!    tresIguais(4,3,4) = false
+
+tresIguais : num # num # num -> truval;
+tresIguais (x, y, z) <= x = y and y = z;
+
+! (Exercício 2.16.2) Definir a função
+!    tresDiferentes : num # num # num -> truval
+! tal que tresDiferentes(x,y,z) verifique se os elementos x, y e z não
+! são iguais. Por exemplo,
+!    tresDiferentes(3,5,2) = true
+!    tresDiferentes(3,5,3) = false
+
+tresDiferentes : num # num # num -> truval;
+tresDiferentes (x, y, z) <= x /= y and x /= z and y /= z;
+
+! (Exercício 2.17.1) Definir a função
+!    quatroIguais : num # num # num # num -> truval
+! tal que quatroIguais(x,y,z,u) verifique se os elementos x, y, z e u são
+! iguais. Por exemplo,
+!    quatroIguais(5,5,5,5) = true
+!    quatroIguais(5,5,4,5) = false
+
+quatroIguais : num # num # num # num -> truval;
+quatroIguais (x, y, z, u) <= x = y and tresIguais (y, z, u);
+
+! 2.18 - Propriedade triangular
+!
+! Os comprimentos dos lados de um triângulo não podem ser qualquer
+! valor. Para que um triângulo pode ser construído, a propriedade
+! triangular deve ser respeitada, ou seja, o comprimento cada lado tem
+! que ser menor que a soma dos outros dois lados.
+!
+! (Exercício 2.18.1) Definir a função
+!    triangulo : num # num # num -> truval;
+! tal que triangulo(a,b,c) verifique se a, c e c correspondem a regra da
+! propriedade trinagular. Por exemplo,
+!    triangulo(3,4,5)  = true
+!    triangulo(30,4,5) = false
+!    triangulo(3,40,5) = false
+!    triangulo(3,4,50) = false
+
+triangulo : num # num # num -> truval;
+triangulo (a, b, c) <= a < b + c and b < a + c and c < a + b;
+
+! (Exercício 2.19.1) Definir a função
+!    divisaoSegura : num # num -> num;
+! tal que divisaoSegura(x,y) seja x/y se o y não for zero e 9999 caso
+! contrário. Por exemplo,
+!    divisaoSegura(7,2) = 3.5
+!    divisaoSegura(7,0) = 9999
+
+divisaoSegura : num # num -> num;
+divisaoSegura (_, 0) <= 9999;
+divisaoSegura (x, y) <= x / y;
+
+! 2.20 - Tipo de um triângulo
+! ===========================
+
+! (Exercício 2.20.1) Definir a função
+!    tipoTriangulo : num # num # num -> list char
+! tal que tipoTriangulo(a,b,c) mostre se for possível os tipos de
+! triângulos formados (equilátero, isósceles e escaleno) pelos lados a,
+! b e c. Por exemplo,
+!    tipoTriangulo(3,3,3) = "Triangulo equilatero"
+!    tipoTriangulo(3,3,2) = "Triangulo isosceles"
+!    tipoTriangulo(3,4,5) = "Triangulo escaleno"
+!    tipoTriangulo(1,3,4) = "Medidas nao forma triangulo!"
+
+tipoTriangulo : num # num # num -> list char;
+tipoTriangulo (a, b, c) <= if triangulo (a, b, c)
+                           then if a = b and b = c
+                                then "Triangulo equilatero"
+                                else if a = b or a = c or c = b
+                                     then "Triangulo isosceles"
+                                     else "Triangulo escaleno"
+                           else error ("Medidas nao formam triangulo!");
+
+! 2.21 - Norma de um vetor
+! =======================
+
+! (Exercício 2.21.1) Definir a função
+!    modulo : num # num -> num
+! tal que modulo(x,y) represente o vetor v como |v| a partir da obtenção
+! da distância entre os pontos x e y. Por exemplo,
+!    modulo(3,4)     = 5
+!    modulo(2.5,6.3) = 6.77790528113222
+
+modulo : num # num -> num;
+modulo (x, y) <= sqrt (pow (x, 2) + pow (y, 2));
+
+! 2.22 - Retângulo de área máxima
+! ===============================
+
+! (Exercício 2.22.1) As dimensões dos retângulos podem ser representadas em pares de valores
+! como (5,3), em que 5 é a base e 3 é a altura. Defina a maior área de um retângulo a partir da
+! função maiorRetangulo tal que maiorRetangulo(r1,r2) represente o retângulo com a maior
+! área entre r1 e r2. Por exemplo,
+!    maiorRetangulo((4,6),(3,7)) = (4,6)
+!    maiorRetangulo((4,6),(3,8)) = (4,6)
+!    maiorRetangulo((4,6),(3,9)) = (3,9)
+!
+maiorRetangulo : (num # num) # (num # num) -> num # num;
+maiorRetangulo ((a, b), (c, d)) <= if a * b >= c * d then (a, b) else (c, d);
+
+! 2.23 - Pontos de um plano
+! =========================
+
+! Os pontos de um plano podem ser representados por um par de números
+! que são suas coordenadas:
+! 1 - Quadrante de um ponto
+! 2 - Intercambio de coordenadas
+! 3 - Ponto simétrico
+! 4 - Distância entre pontos
+! 5 - Ponto médio entre dois pontos
+!
+! (Exercício 2.23.1) Definir a função quadrante tal que quadrante(p) 
+! seja o quadrante do ponto p, assumindo que p não faz parte dos eixos. 
+! Por exemplo,
+!    quadrante(3,5)     = 1
+!    quadrante(0-3,5)   = 2
+!    quadrante(0-3,0-5) = 3
+!    quadrante(3,0-5)   = 4
+
+quadrante : num # num -> num;
+quadrante (x, y) <= if x > 0 and y > 0 then 1 else
+                    if x < 0 and y > 0 then 2 else
+                    if x < 0 and y < 0 then 3 else
+                    if x > 0 and y < 0 then 4 else 0;
+
+! (Exercício 2.23.2) Definir a função intercambio tal que
+! intercambio(p) seja a obtenção de um ponto a partir da troca das
+! coordenadas do ponto p. Por exemplo,
+!    intercambio(2,5) = (5,2)
+!    intercambio(5,2) = (2,5)
+
+intercambio : num # num -> num # num;
+intercambio (x, y) <= (y, x);
+
+! (Exercício 2.23.3) Definir a função simetricoH tal que
+! simetricoH(p) seja o ponto simétrico de p em relação ao eixo
+! horizontal. Por exemplo,
+!    simetricoH(2,5)   = (2,-5)
+!    simetricoH(2,0-5) = (2,5)
+
+simetricoH : num # num -> num # num;
+simetricoH (x, y) <= (x, 0 - y);
+
+! (Exercício 2.23.4) Definir a função distancia tal que
+! distancia(p1,p2) seja a distância entre os pontos p1 e p2. Por
+! exemplo,
+!    distancia((1,2),(4,6)) = 5
+
+distancia : (num # num) # (num # num) -> num;
+distancia ((x1, y1), (x2, y2)) <= sqrt (pow (x1 - x2, 2) + pow (y1 - y2, 2));
+
+! (Exercício 2.23.5) Definir a função pontoMedio tal que
+! pontoMedio(p1,p2) seja o ponto médio entre os pontos p1 e p2. Por
+! exemplo,
+!    pontoMedio((0,2),(0,6))   = (0,4)
+!    pontoMedio((0-1,2),(7,6)) = (3,4)
+
+pontoMedio : (num # num) # (num # num) -> num # num;
+pontoMedio ((x1, y1), (x2, y2)) <= ((x1 + x2) / 2, (y1 + y2) / 2);
+
+! 2.24 - Números complexos
+! =======================
+
+! Os números complexos podem ser representados por pares de números, por
+! exemplo, o número 2 + 5i pode ser representado pelo par (2,5).
+! 1 - Soma de números complexos
+! 2 - Produto de números complexos
+! 3 - Conjugado de um número complexo
+
+! (Exercício 2.24.1) Definir a função somaComplexo tal que
+! somaComplexo(x,y) seja a soma dos números complexos x e y. Por
+! exemplo,
+!    somaComplexo((2,3),(5,6)) = (7,9)
+!    somaComplexo((1,2),(1,3)) = (2,5)
+
+somaComplexo : (num # num) # (num # num) -> num # num;
+somaComplexo ((a, b), (c, d)) <= (a + c, b + d);
+
+! (Exercício 2.24.2) Definir a função produtoComplexo tal que
+! produtoComplexo(x,y) seja a multiplicação dos números complexos x e
+! y. Por exemplo,
+!    produtoComplexo((2,3),(5,6)) = (-8,27)
+
+produtoComplexo : (num # num) # (num # num) -> num # num;
+produtoComplexo ((a, b), (c, d)) <= (a * c - b * d, a * d + b * c);
+
+! (Exercício 2.24.3) Definir a função conjulgado tal que
+! conjulgado(z) seja o conjulgado do número complexo z. Por exemplo,
+!    conjulgado(2,3) = (2,-3)
+
+conjulgado : num # num -> num # num;
+conjulgado (a, b) <= (a, 0 - b);
+
+! 2.25 - Intercalação de pares
+! ============================
+
+! (Exercício 2.25.1) Definir a função intercala tal que
+! intercala(xs,ys) receba duas listas xs e ys com dois elementos cada
+! e devolva uma lista com quatro elementos, construída intercalando os
+! elementos de xs e ys. Por exemplo,
+!    intercala([1,4],[3,2]) = [1,3,4,2]
+
+intercala : list num # list num -> list num;
+intercala ([x1, x2], [y1, y2]) <= [x1, y1, x2, y2];
+
+! 2.26 - Permuta cíclica de uma lista
+! ===================================
+
+! (Exercício 2.26.1) Definir a função ciclo tal que ciclo(xs) receba
+! uma lista xs e permute ciclicamente os seus elementos passando o
+! último elemento da lsita para seu início. Por exemplo,
+!    ciclo([2,5,7,9]) = [9,2,5,7]
+!    ciclo([])        = nil (para [])
+!    ciclo([2])       = [2]
+
+ciclo : list num -> list num;
+ciclo [] <= [];
+ciclo xs <= last xs :: init xs;
+
+! 2.27 - O maior número de 2 dígitos a partir de dois dígitos fornecidos
+! ======================================================================
+
+! (Exercício 2.27.1) Definir a função maiorNumero tal que
+! maiorNumero(x,y) seja o maior número entre dois dígitos que podem
+! ser construídos a partir dos dígitos x e y. Por exemplo,
+!    numeroMaior(2,5) = 52
+!    numeroMaior(5,2) = 52
+
+numeroMaior : num # num -> num;
+numeroMaior (x, y) <= a * 10 + b
+                      where a == max (x, y)
+                      where b == min (x, y);
+
+! 2.28 - Quantidade de raízes de uma equação quadrática (2º grau)
+! ===============================================================
+
+! (Exercício 2.28.1) Definir a função numeroDeRaizes tal que
+! numeroDeRaizes(a,b,c) represente o número de raízes reais para uma
+! equação ax^2 + bx + c = 0. Por exemplo,
+!    numeroDeRaizes(2,0,3)   = 0
+!    numeroDeRaizes(4,4,1)   = 1
+!    numeroDeRaizes(5,23,12) = 2
+
+numeroDeRaizes : num # num # num -> num;
+numeroDeRaizes (a, b, c) <= if d < 0 then 0 else
+                            if d = 0 then 1 else 2
+                            where d == pow (b, 2) - 4 * a * c;
+
+! 2.29 - Raízes de uma equação quadrática (2º grau)
+! =================================================
+
+! (Exercício 2.29.1) Definir a função raizes tal que raizes(a,b,c)
+! devolva na forma de lista os valores das raízes reais da equação ax^2
+! + bx + c = 0. Por exemplo,
+!    raizes1(1,0-2,1) = [1,1]
+!    raizes1(1,3,2)   = [-1,-2]
+!    raizes2(1,0-2,1) = [1,1]
+!    raizes2(1,3,2)   = [-1,-2]
+!    raizes2(1,2,3)   = Nao existem raizes reais
+
+! Solução 1:
+raizes1 : num # num # num -> list num;
+raizes1 (a, b, c) <= [(0 - b + d) / t, (0 - b - d) / t]
+                     where d == sqrt (pow (b, 2) - 4 * a * c)
+                     where t == 2 * a;
+
+! Solução 2:
+raizes2 : num # num # num -> list num;
+raizes2 (a, b, c) <= if d >= 0 then [(0 - b + e) / (2 * a), (0 - b - e) / (2 * a)]
+                     else error ("Nao existem raizes reais")
+                     where e == sqrt d
+                     where d == pow (b, 2) - 4 * a * c;
+
+! 2.30 - Área de um triângulo mediante a fórmula de Herón
+! =======================================================
+
+! (Exercício 2.30.1) Em geometria, a fórmula descoberta por Herón de
+! Alexandria, diz que a área de um triângulo cujos lados medem a, b e c
+! é a raíz quadrada de s*(s - a)*(s - b)*(s - c), onde s é o
+! semiperímetro a partir de s = (a+b+c)/2.  Definir a função area tal
+! que area(a,b,c) seja a área de um triângulos com lados a, b e c.  Por
+! exemplo,
+!    area(3,4,5) = 6
+
+area : num # num # num -> num;
+area (a, b, c) <= sqrt (s * (s - a) * (s - b) * (s - c))
+                  where s == (a + b + c) / 2;
+
+! 2.31 - Números racionais como pares de inteiros
+! ===============================================
+
+! Os números racionais podem ser representados por pares de números
+! inteiros. Por exemplo, o número 2/5 pode ser representado pelo par
+! (2,5).
+! 1 - Forma reduzida de um número racional
+! 2 - Soma de dois números racionais
+! 3 - Produto de dois números racionais
+! 4 - Igualdade de números racionais
+
+! (Exercício 2.31.1) Definir a função formaReduzida tal que
+! formaReduzida(x) seja a forma reduzida do número racional x. Por
+! exemplo,
+!    formaReduzida(4,10) = (2,5)
+
+formaReduzida : num # num -> num # num;
+formaReduzida (a, b) <= (a div c, b div c) where c == gcd (a, b);
+
+! (Exercício 2.31.2) Definir a função somaRacional tal que
+! somaRacional(x,y) seja a soma dos números racionais x e y. Por
+! exemplo,
+!    somaRacional((2,3),(5,6)) = (3,2)
+
+somaRacional : (num # num) # (num # num) -> num # num;
+somaRacional ((a, b), (c, d)) <= formaReduzida (a * d + b * c, b * d);
+
+! (Exercício 2.31.3) Definir a função produtoRacional tal que
+! [produtoRacional(x,y);] é a multiplicação dos números racionais x e
+! y. Por exemplo,
+!    produtoRacional((2,3),(5,6)) = (5,9)
+
+produtoRacional : (num # num) # (num # num) -> num # num;
+produtoRacional ((a, b), (c, d)) <= formaReduzida (a * c, b * d);
+
+! (Exercício 2.31.4) Definir a função igualdadeoRacional tal que
+! igualdadeRacional(x,y) seja a verificação se os números racionais x e
+! y são iguais. Por exemplo,
+!    igualdadeRacional((6,9),(10,15)) = true
+!    igualdadeRacional((6,9),(11,15)) = false
+
+igualdadeRacional : (num # num) # (num # num) -> truval;
+igualdadeRacional ((a, b), (c, d)) <= formaReduzida (a, b) = formaReduzida (c, d);
+
+! 2.32 - Múltiplo de "n" sobre "m"
+! ================================
+
+! (Exercício 2.32.1) Definir a função multiplo tal que multiplo(n,m)
+! informe se dado número n este é múltiplo de m. Por exemplo,
+!    multiplo(8,4) = true
+!    multiplo(5,2) = false
+!    multiplo(9,3) = true
+!    multiplo(9,6) = false
+
+multiplo : num # num -> truval;
+multiplo (n, m) <= n mod m = 0;
+
+! 1.33 - Média dos elementos de uma lista
+! =======================================
+
+! (Exercício 1.33.1) Definir a função media tal que media([xs])
+! apresente o valor da média aritmética dos elementos de uma lista
+! xs. Por exemplo,
+!    media([1,2,3])        = 2
+!    media([1,1.5,2.75,3]) = 2.0625
+
+media : list num -> num;
+media xs <= sum xs / length xs;

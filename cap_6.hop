@@ -1,0 +1,378 @@
+! Capítulo 6 – Funções de ordem superior
+! ======================================
+
+uses cap_5;
+
+! 6.1 - Segmento inicial verificando certa propriedade
+! ====================================================
+
+! (Exercício 6.1.1) Definir por recursão a função takeWhile' tal que
+! takeWhile'(p,[xs]) seja a lista dos elementos de xs até o primeiro
+! elemento que cumpra a propriedade p. Por exemplo,
+!    takeWhile'((<7),[2,3,9,4,5]) = [2,3]
+
+takeWhile' : (alpha -> truval) # list alpha -> list alpha;
+takeWhile' (_, [])      <= [];
+takeWhile' (p, x :: xs) <= if p x
+                           then x :: takeWhile' (p, xs)
+                           else [];
+
+! 6.2 - Complementar ao segmento inicial, verificando uma propriedade
+! ===================================================================
+
+! (Exercício 6.2.1) Definir por recursão a função dropWhile' tal que
+! dropWhile'(p,[xs]) seja a lista obtida a partir da eliminação dos
+! elementos de xs até o primeiro elemento que cumpra a propriedade
+! p. Por exemplo,
+!    dropWhile'((<7),[2,3,9,4,5]) = [9,4,5]
+
+dropWhile' : (alpha -> truval) # list alpha -> list alpha;
+dropWhile' (_, [])      <= [];
+dropWhile' (p, x :: xs) <= if p x
+                           then dropWhile' (p, xs)
+                           else x :: xs;
+
+! 6.3 - Concatenação de uma lista
+! ===============================
+
+! (Exercício 6.3.1) Definir por recursão a função concat tal que
+! concat([xss]) seja a junção dos elementos separados de xxs em uma
+! única lista. Por exemplo,
+!    concat([[1,3],[2,4,6],[1,9]]) = [1,3,2,4,6,1,9]
+
+concat : list (list alpha) -> list alpha;
+concat []          <= [];
+concat (xs :: xss) <= xs <> concat xss;
+
+! 6.4 - Divisão de uma lista numérica por sua média
+! =================================================
+
+! (Exercício 6.4.1) Dada uma lista numérica xs calcular o par (ys,zs),
+! sendo que ys contém os elementos de xs estritamente menores que a
+! média, enquanto que zs contém os elementos estritamente maiores que a
+! média. Por exemplo,
+!    divideMedia([6,7,2,8,6,3,4]) = ([2,3,4],[6,7,8,6])
+! Para realizar as operações de média lembre-se de usar a função media
+! definida anteriormente.  Segue para conhecimento seu código.
+media : list num -> num;
+media (xs) <= sum xs / length xs;
+! Definir a função divideMedia tal que [divideMedia(xs);] realize a operação indicada.
+
+divideMedia : list num -> list num # list num;
+divideMedia xs <= (filter (\x => x < m, xs),
+                   filter (\x => x > m, xs))
+                  where m == media xs;
+
+! 6.5 - Lista com elementos consecutivos relacionados
+! ===================================================
+
+! (Exercício 6.5.1) Definir por recursão a função relacionados tal que
+! relacionados(r,[xs]) verifique se todo par (x,y) de elementos
+! consecutivo de xs cumpre a relação r. Por exemplo.  Por exemplo,
+!    relacionados((<),[2,3,7,9]) = true
+!    relacionados((<),[2,3,1,9]) = false
+
+relacionados : (alpha # alpha -> truval) # list alpha -> truval;
+relacionados (_, _)            <= true;
+relacionados (r, x :: y :: zs) <= if x < y
+                                  then relacionados (r, y :: zs)
+                                  else false;
+
+! 6.6 - Números com dígitos pares
+! ===============================
+
+! (Exercício 6.6.1) Definir por recursão a função superPar tal que
+! superPar(n) verifique se n é um número par tal que todos os seus
+! dígitos são pare. Por exemplo,
+!    superPar(426) = true
+!    superPar(425) = false
+
+superPar : num -> truval;
+superPar n <= if n < 0 then even n else even (n div 10);
+
+! (Exercício 6.6.2) Definir por filtragem a função superPar2 tal que
+! superPar2(n) verifique se n é um número par tal que todos os seus
+! dígitos são pare. Por exemplo,
+!    superPar2(426) = true
+!    superPar2(425) = false
+
+superPar2 : num -> truval;
+superPar2 n <= filter (even, digitos n) = digitos n;
+
+! 6.7 - Lista de elementos que satisfazem uma propriedade
+! =======================================================
+
+! (Exercício 6.7.1) Definir por mapeamento e filtragem a função
+! filtraAplica1 tal que filtraAplica1(f,p,[xs]) seja a lista de
+! elementos numéricos obtida a partir dos elementos de xs que atendam ao
+! predicado p da função f. Por exemplo,
+!    filtraAplica1((4+), (<3), 1..7) = [5,6]
+
+filtraAplica1 : (num -> num) # (num -> truval) # list num -> list num;
+filtraAplica1 (f, p, xs) <= map (filter (p, xs), f);
+
+! (Exercício 6.7.2) Definir por recursão a função filtraAplica2 tal que
+! filtraAplica2(f,p,[xs]) seja a lista de elementos numéricos obtida
+! a partir dos elementos de xs que atendam ao predicado p da função
+! f. Por exemplo,
+!    filtraAplica2((4+), (<3), 1..7) = [5,6]
+
+filtraAplica2 : (num -> num) # (num -> truval) # list num -> list num;
+filtraAplica2 (f, p, [])      <= [];
+filtraAplica2 (f, p, x :: xs) <= if p x
+                                 then f x :: filtraAplica2 (f, p, xs)
+                                 else filtraAplica2 (f, p, xs);
+
+! 6.8 - Maior e menor elemento de uma lista
+! =========================================
+
+! (Exercício 6.8.1) Definir por recursão a função maximum' tal que
+! maximum'([xs]) seja o maior elemento existente na lista xs. Por
+! exemplo,
+!    maximum'([3,7,2,5]) = 7
+
+maximum' : list alpha -> alpha;
+maximum' ([x])          <= x;
+maximum' (x :: y :: ys) <= max (x, maximum' (y :: ys));
+
+! (Exercício 6.8.2) Definir por recursão a função minimum' tal que
+! minimum'([xs]) seja o menor elemento existente na lista xs. Por
+! exemplo,
+!    minimum'([3,7,2,5]) = 2
+
+minimum' : list alpha -> alpha;
+minimum' ([x])          <= x;
+minimum' (x :: y :: ys) <= min (x, minimum' (y :: ys));
+
+! 6.9 - Inversão de uma lista
+! ===========================
+
+! (Exercício 6.9.1) Definir por recursão a função inversa1 tal que
+! inversa1([xs]) seja o a inversão dos elementos da lista xs por
+! concatenação. Por exemplo,
+!    inversa1([3,7,2,5]) = [5,2,7,3]
+
+inversa1 : list alpha -> list alpha;
+inversa1 []        <= [];
+inversa1 (x :: xs) <= inversa1 xs <> [x];
+
+! (Exercício 6.9.2) Definir por recursão a função inversa2 tal que
+! inversa2([xs]) seja o a inversão dos elementos da lista xs sem o
+! uso de concatenação. Use o operador de construção de listas ::. Por
+! exemplo,
+!    inversa2([3,7,2,5]) = [5,2,7,3]
+
+inversa2 : list alpha -> list alpha;
+inversa2 [] <= [];
+inversa2 xs <= last xs :: inversa2 (init xs);
+
+! 6.10 - Número correspondente da lista na forma decimal
+! ======================================================
+
+! (Exercício 6.10.1) Definir por dobra a função dec2ent tal que
+! dec2ent([xs]) seja o número inteiro correspondente a sua forma
+! decimal. Por exemplo,
+!    dec2ent([2,3,4,5]) = 2345
+
+dec2ent : list num -> num;
+dec2ent xs <= foldl (\(a, x) => 10 * a + x, 0, xs);
+
+! 6.11 - Soma dos valores uma lista, aplicados a certa operação
+! =============================================================
+
+! (Exercício 6.11.1) Definir por recursão a função somaComOper tal que
+! somaComOper(f,[xs]) seja a soma dos valores da lista xs aplicando a
+! operação da função f. Por exemplo,
+!    somaComOper((*2),[3,5,10])  = 36
+!    somaComOper((/10),[3,5,10]) = 1.8
+
+somaComOper : (alpha -> num) # list alpha -> num;
+somaComOper (f, [])      <= 0;
+somaComOper (f, x :: xs) <= f x + somaComOper (f, xs);
+
+! 6.12 - Soma das somas das listas em uma lista de listas
+! =======================================================
+
+! (Exercício 6.12.1) Definir por recursão a função sumll tal que
+! sumll([xss]) seja a soma das somas das listas xss. Por exemplo,
+!    sumll([[1,3],[2,5]]) = 11
+
+sumll : list (list num) -> num;
+sumll []            <= 0;
+sumll (xs :: xss) <= sum xs + sumll xss;
+
+! 6.13 - Lista obtida apagando as ocorrências de certo elemento
+! =============================================================
+
+! (Exercício 6.13.1) Definir por recursão a função apagaOcorrs tal que
+! apagaOcorrs(y,[xs]) seja a lista após remoção das ocorrências de y
+! na lista xs. Por exemplo,
+!    apagaOcorrs(5,[2,3,5,6])   = [2,3,6]
+!    apagaOcorrs(5,[2,3,5,6,5]) = [2,3,6]
+!    apagaOcorrs(7,[2,3,5,6])   = [2,3,5,6]
+
+apagaOcorrs : alpha # list alpha -> list alpha;
+apagaOcorrs (y, [])      <= [];
+apagaOcorrs (y, x :: xs) <= if y = x
+                            then apagaOcorrs (y, xs)
+                            else x :: apagaOcorrs (y, xs);
+
+! 6.14 - Diferença de duas listas
+! ===============================
+
+! (Exercício 6.14.1) Definir por recursão a função diferenca tal que
+! diferenca([xs],[ys]) seja a diferença entre os conjuntos xs e ys, ou
+! seja, definir o conjunto dos elementos de xs que não pertencem ao
+! conjunto ys. Por exemplo,
+!    diferenca([2,3,5,6],[5,2,7]) = [3,6]
+
+diferenca : list alpha # list alpha -> list alpha;
+diferenca (a, [])      <= a;
+diferenca ([], b)      <= [];
+diferenca (a :: as, b) <= if member (a, b)
+                          then diferenca (as, b)
+                          else a :: diferenca (as, b);
+
+! 6.15 - A cara e coroa de uma lista
+! ==================================
+
+! Se denomina coroa de xs uma sublista não vazia de xs formada por um
+! elemento e os elementos seguintes até o final. Por exemplo, [3,4,5] é
+! a coroa da lista [1,2,3,4,5].
+
+! (Exercício 6.15.1) Definir por recursão a função coroa tal que
+! coroa([xs]) seja a lista das coroas da lista xs. Por exemplo,
+!    coroa([])      = [nil]
+!    coroa([1,2])   = [[1,2],[2],nil]
+!    coroa([1,2,3]) = [[1,2,3],[2,3],[3],nil]
+
+coroa : list alpha -> list (list alpha);
+coroa []        <= [[]];
+coroa (x :: xs) <= (x :: xs) :: coroa xs;
+
+! Se denomina cara de xs uma sublista não vazia de xs formada pelo
+! primeiro elemento e os elementos seguintes até certo ponto. Por
+! exemplo, [1,2,3] é a cara da lista [1,2,3,4,5].
+
+! (Exercício 6.15.2) Definir por recursão a função cara tal que
+! cara([xs]) seja a lista das caras da lista xs. Por exemplo,
+!    cara([])      = [nil]
+!    cara([1,2])   = [nil,[1],[1,2]]
+!    cara([1,2,3]) = [nil,[1],[1,2],[1,2,3]]
+
+cara : list alpha -> list (list alpha);
+cara []        <= [[]];
+cara (x :: xs) <= [] :: compNum (\ys => x :: ys, cara xs);
+
+! 6.16 - Problema de Ullman: subconjunto de tamanho dado e com soma limitada
+! ==========================================================================
+
+! (Exercício 6.16.1) Definir a função ullman tal que ullman(t,k,[xs])
+! verifique se xs possui um subconjunto com k elementos cuja a soma seja
+! menor que t. Por exemplo,
+!    ullman(9,3,1..10) = true
+!    ullman(5,3,1..10) = false
+
+ullman : num # num # list num -> truval;
+ullman (t, k, xs) <= sum (take (k, sort xs)) < t;
+
+! 6.17 - Decomposições de um número como a soma de dois quadrados
+! ===============================================================
+
+! (Exercício 6.17.1) Definir a função somaDeDoisQuadrados tal que
+! somaDeDoisQuadrados(n) seja a lista de pares de números, de modo
+! que a soma de seus quadrados seja n e o primeiro elemento do par seja
+! maior ou igual ao segundo. Por exemplo,
+!    somaDeDoisQuadrados(25)  = [(5,0),(4,3)]
+!    somaDeDoisQuadrados(16)  = [(4,0)]
+!    somaDeDoisQuadrados(35)  = nil
+!    somaDeDoisQuadrados(225) = [(15,0),(12,9)]
+
+sddq : num # num # num -> list (num # num);
+sddq (x, y, n) <= if x < y then [] else
+                  if pow (x, 2) + pow (y, 2) < n then sddq (x, y + 1, n) else
+                  if pow (x, 2) + pow (y, 2) = n then (x, y) :: sddq (x - 1, y + 1, n)
+                  else sddq (x - 1, y, n);
+
+somaDeDoisQuadrados : num -> list (num # num);
+somaDeDoisQuadrados n <= sddq (ceil (sqrt n), 0, n);
+
+! 6.18 - A identidade de Bézout
+! =============================
+
+! (Exercício 6.18.1) Definir a função bezout tal que bezout(x,y) seja
+! um par de números x e y em que a*x+b*y é o máximo divisor comum de a e
+! b. Por exemplo,
+!    bezout(21,15) = (0-2,3)
+
+! Sugestão: Use do arquivo de suporte mylist.hop a função quotRem que
+! retorna um par de números formado pelos quociente inteiro (a div b) e
+! resto (a mod b) da divisão de x por y a partir do uso da operação:
+! quotRem(a,b).
+
+! Solução:
+! Um exemplo de cálculo é o seguinte:
+!     a  b q  r
+!    36 21 1 15   (1)
+!    21 15 1  6   (2)
+!    15  6 2  3   (3)
+!     6  3 2  0
+!     3  0
+!
+! Por tanto,
+!    3 = 15 - 6 * 2                     [por (3)]
+!      = 15 - (21 - 15 * 1) * 2         [por (2)]
+!      = 21 * (-2) + 15 * 3
+!      = 21 * (-2) + (36 - 21 * 1) * 3  [por (1)]
+!      = 36 * 3 + 21 * (-5)
+!
+! Sendo q e r o quociente inteiro e o resto de a entre b, d é o maior
+! múltiplo comum entre a e b e (x, y) é o valor de (bezout(b,r)). Então,
+!    a = bp + r
+!    d = bx + ry
+!
+! Por tanto,
+!    d = bx + (a - bp)y
+!      = ay + b(x - qy)
+!
+! Logo,
+!    bezout(a, b) = (y, x - qy)
+!
+! A definição de bezout é
+bezout : num # num -> num # num;
+bezout (_, 0) <= (1, 0);
+bezout (_, 1) <= (0, 1);
+bezout (a, b) <= (y, x - q * y)
+                 where (x, y) == bezout (b, r)
+                 where (q, r) == quotRem (a, b);
+
+! 6.19 - Solução de uma equação diofantica
+! ========================================
+
+! (Exercício 6.19.1) Neste exercício, verifica-se que a equação diofântica:
+!    1/x(1) + 1/x(2) + ··· + 1/x(n) = 1
+! tem solução quando para todo n = 1 é possível construir uma lista de
+! inteiros a partir do comprimento de n tal que a soma de seus inversos
+! seja 1. Para fazer isso, basta observar que se [x1, x2 , ... , xn] é
+! uma solução, então [2, 2x1, 2x2, ..., 2xn] também o é. Por tanto,
+! defina a função para a equação diofantica em que n indica o
+! cumprimento da lista. Por exemplo,
+!    diofantica(1) = [1]
+!    diofantica(2) = [2,2]
+!    diofantica(3) = [2,4,4]
+!    diofantica(4) = [2,4,8,8]
+!    diofantica(5) = [2,4,8,16,16]
+
+diofantica : num -> list num;
+diofantica 1 <= [1];
+diofantica n <= 2 :: map (diofantica (n - 1), (2 *));
+
+! (Exercício 6.19.2) Definir a função ehDiofantica tal que
+! ehDiofantica([xs]) verifique se a soma dos inversos de xs é igual a
+! 1. Por exemplo,
+!    ehDiofantica([4,2,4])       = true
+!    ehDiofantica([2,3,4])       = false
+!    ehDiofantica(diofantica(5)) = true
+
+ehDiofantica : list num -> truval;
+ehDiofantica xs <= sum (map (xs, (1 /))) = 1;

@@ -1,0 +1,679 @@
+uses cap_2;
+
+! Capítulo 3: Definições por recursão
+
+! 3.1 - Potência de exponente natural
+! ===================================+
+
+! (Exercício 3.1.1) Definir por recursão a função potencia tal que
+! potencia(x,n) seja o valor de x elevado a n. Por exemplo,
+!    potencia(2,3) = 8
+
+potencia : num # num -> num;
+potencia (x, 0) <= 1;
+potencia (x, n) <= x * potencia (x, n - 1);
+
+! 3.2 - Repetição (replicar) de um elemento
+! =========================================
+
+! (Exercício 3.2.1) Definir por recursão a função repetir tal que
+! repetir(n,x) seja o valor de x elevado a n. Por exemplo,
+!    repetir(3,2) = [2,2,2]
+
+repetir : num # num -> list num;
+repetir (0, _)     <= [];
+repetir (n + 1, x) <= x :: repetir (n, x);
+
+! 3.3 - Duplo fatorial de um número
+! =================================
+
+! (Exercício 3.3.1) O duplo fatorial de um número n se define por
+!    0!! = 1
+!    1!! = 1
+!    n!! = n * (n - 2) * ... * 3 * 1, si n é impar
+!    n!! = n * (n - 2) * ... * 4 * 2, si n é par
+! Por exemplo,
+!    8!! = 8 * 6 * 4 * 2     = 384
+!    9!! = 9 * 7 * 5 * 3 * 1 = 945
+! Definir por recursão a função duploFatorial tal que
+! duploFatorial(n) seja o duplo fatorial de n. Por exemplo,
+!    duploFatorial(8) = 384
+!    duploFatorial(9) = 945
+
+duploFatorial : num -> num;
+duploFatorial 0 <= 1;
+duploFatorial 1 <= 1;
+duploFatorial n <= n * duploFatorial (n - 2);
+
+! 3.4 - Algoritmo de Euclides para o máximo divisor comum
+! =======================================================
+
+! (Exercício 3.4.1) Dados dois números naturais, a e b, é possível
+! calcular seu maior divisor comum usando o Algoritmo de Euclides. Este
+! algoritmo pode ser resumido na seguinte fórmula:
+!
+! Definir por recursão a função mdc tal que mdc(a,b) seja o máximo
+! divisor comum de a e b calculado mediante o algoritmo de Euclides. Por
+! exemplo,
+!    mdc(30,45) = 15
+
+mdc : num # num -> num;
+mdc (a, 0) <= a;
+mdc (a, b) <= mdc (b, a mod b);
+
+! 3.5 - Menor número divisível por uma sequência de números
+! =========================================================
+
+! (Exercício 3.5.1) Definir por recursão a função menorDivisivel tal que
+! menorDivisivel(a,b) seja o menor número divisível entre a e b. Por
+! exemplo,
+!    menorDivisivel(2,5) = 60
+!
+! Obs. Usar a função lcm, tal que lcm(x,y); é o mínimo múltiplo comum de
+! x e y.
+
+menorDivisivel : num # num -> num;
+menorDivisivel (a, b) <= if a = b
+                         then a
+                         else lcm (a, menorDivisivel (a + 1, b));
+
+! (Exercício 3.5.2) Definir a constante euler5 tal que [euler5] é o
+! menor número divisível pelos números de 1 a 20 e calcular seu valor.
+
+euler5 : num;
+euler5 <= menorDivisivel (1, 20);
+
+! O cálculo é:
+! >: euler5;
+! >> 232792560 : num
+
+! 3.6 - Número de passos para resolver o problema da torre de Hanoi
+! =================================================================
+
+! (Exercício 3.6.1) Três hastes de platina são encontradas em um templo
+! hindu. Em uma delas (primeira haste), há 64 anéis de ouro de raios
+! diferentes, colocados do mais alto ao mais baixo.  O trabalho dos
+! monges do templo é passar todos os anéis da primeira para a terceira
+! haste, usando a segunda como haste auxiliar, com as seguintes
+! condições:
+! + Apenas um anel pode ser movido a cada etapa.
+! + Não poderá haver um anel de diâmetro maior em cima de um de diâmetro
+!   menor.
+!
+! Reza a lenda que quando todos os anéis estiverem na terceira haste,
+! será o fim do mundo.
+!
+! Para 64 anéis é retornado o valor 18.446.744.073.709.551.615.
+!
+! Definir a função numPassosHanoi tal que numPassosHanoi(n) seja o
+! número de passos necessários para movimentar n anéis. Por exemplo,
+!    numPassosHanoi(2)  = 3
+!    numPassosHanoi(7)  = 127
+!    numPassosHanoi(64) = 1.84467440737096e+19
+
+! Solução: Sejam A, B e C as três hastes. A estratégia recursiva é a seguinte:
+! + Caso base (n = 1): o disco é movido de A para C.
+! + Caso indutivo (n = m + 1): move-se m discos de A para C; move-se o
+!   disco de A para B e move-se m discos de C para B.
+! Por tanto,
+
+numPassosHanoi : num -> num;
+numPassosHanoi 1       <= 1;
+numPassosHanoi (n + 1) <= 1 + 2 * numPassosHanoi n;
+
+! 3.7 - Conjunção de uma lista
+! ============================
+
+! (Exercício 3.7.1) Definir por recursão a função and’ tal que
+! and’(xs) verifique se todos os elementos de xs são verdadeiros. Por
+! exemplo,
+!    and'([1+2 < 4, 2::[3] = [2,3]]) =  true
+!    and'([1+2 < 3, 2::[3] = [2,3]]) =  false
+
+and' : list truval -> truval;
+and' []        <= true;
+and' (b :: bs) <= b and and' bs;
+
+! 3.8 - Pertence a uma lista
+! ==========================
+
+! (Exercício 3.8.1) Definir por recursão a função elem' tal que
+! elem'(x,xs) verifique se x pertence a lista xs. Por exemplo,
+!    elem'(3, [2,3,5])  = true
+!    elem'(4, [2,3,5])  = false
+!    elem''(3, [2,3,5]) = true
+!    elem''(4, [2,3,5]) = false
+
+! Solução 1:
+elem' : num # list num -> truval;
+elem' (x, [])      <= false;
+elem' (x, y :: ys) <= if x = y then true else elem' (x, ys);
+
+! Solução 2:
+elem'' : num # list num -> truval;
+elem'' (x, [])      <= false;
+elem'' (x, y :: ys) <= x = y or elem'' (x, ys);
+
+! 3.9 - Último elemento de uma lista
+! ==================================
+
+! (Exercício 3.9.1) Definir por recursão a função last' tal que
+! last'(xs) seja o último elemento de xs. Por exemplo,
+!    last'([2,3,5]) = 5
+
+last' : list num -> num;
+last' ([x])     <= x;
+last' (_ :: xs) <= last' xs;
+
+! 3.10 - Concatenação de uma lista
+! ================================
+
+! (Exercício 3.10.1) Definir por recursão a função concat' tal que
+! [concat'(xss);] é uma lista obtida a partir da concatenação das listas
+! de xss. Por exemplo,
+!    concat'([1..3,5..7,8..9])    = [1,2,3,5,6,7,8,9]
+!    concat'([[1,2],[3,4,5],[6]]) = [1,2,3,4,5,6]
+
+concat' : list (list num) -> list num;
+concat' []          <= [];
+concat' (xs :: xss) <= xs <> concat' xss;
+
+! 3.11 - Seleção de um elemento
+! =============================
+
+! (Exercício 3.11.1) Definir por recursão a função seleciona tal que
+! seleciona(xs,n) seja o enésimo elemento de xs. Por exemplo,
+!    seleciona([2,3,5,7], 2) = 5
+
+seleciona : list num # num -> num;
+seleciona (x :: _, 0)  <= x;
+seleciona (_ :: xs, n) <= seleciona (xs, n - 1);
+
+! 3.12 - Seleção dos primeiros elementos
+! ======================================
+
+! (Exercício 3.12.1) Definir por recursão a função take' tal que
+! take'(n,xs) seja a lista dos primeiros n elementos de xs. Por
+! exemplo,
+!    take'(3, 4..12)     = [4,5,6]
+!    take'(2, [9,7,5,3]) = [9,7]
+
+take' : num # list num -> list num;
+take' (0, _) <= [];
+take' (_, []) <= [];
+take' (n, x :: xs) <= x :: take' (n - 1, xs);
+
+! 3.13 - Intercalação (comparação) de média aritmética
+! ====================================================
+
+! (Exercício 3.13.1) Definir por recursão a função refinada tal que
+! refinada(xs) seja a lista da intercalação entre cada dois elementos
+! consecutivos de xs e a média aritmética entre esses valores
+! posicionada entre os valores. Por exemplo,
+!    refinada([2,7,1,8]) = [2,4.5,7,4,1,4.5,8]
+!    refinada([2])       = [2]
+!    refinada([])        = []
+
+refinada : list num -> list num;
+refinada xs             <= xs;
+refinada (x :: y :: zs) <= x :: (x + y) / 2 :: refinada (y :: zs);
+
+! 3.14 - Classificação de listas com mesclagem de elementos
+! =========================================================
+
+! 1. Junção de elementos entre duas listas
+! 2. Separação de elementos de uma lista em duas listas
+! 3. Classificação por mesclagem de listas
+! 4. Validação de lista classificada
+! 5. Classificação por mesclagem de permutação
+! 6. Determinação de permutações
+
+! (Exercício 3.14.1) Definir por recursão a função mescla tal que
+! mescla(xs,ys) seja a junção dos elementos das listas classificadas
+! xs e ys. Por exemplo,
+!    mescla([2,5,6],[1,3,4]) = [1,2,3,4,5,6]
+!    mescla([2,6,5],[3,1,4]) = [2,3,1,4,6,5]
+
+mescla : list num # list num -> list num;
+mescla ([], ys)           <= ys;
+mescla (xs, [])           <= xs;
+mescla (x :: xs, y :: ys) <= if x =< y
+                             then x :: mescla (xs, y :: ys)
+                             else y :: mescla (x :: xs, ys);
+
+! (Exercício 3.14.2) Definir por recursão a função metade tal que
+! metade(xs) seja formada por um par de listas contendo a metade dos
+! elementos de xs divididos de modo que o comprimento entre as listas
+! seja de no máximo um elemento. Por exemplo,
+!    metade([2,3,5,7,9]) = ([2,3],[5,7,9])
+!    metade([2,3,5,6,7,9]) = ([2,3,5],[6,7,9])
+
+metade : list num -> list num # list num;
+metade xs <= splitAt (length xs div 2, xs);
+
+! (Exercício 3.14.3) Definir por recursão a função classifMescla tal que
+! classifMescla(xs) seja a lista xs classificada a partir da junção
+! de seus elementos (se a lista estiver vazia retorna-se o valor vazio;
+! se a lista possuir um só elemento retornará este elemento, mas se a
+! lista tiver elementos distintos estes deverão ser separados em duas
+! listas para que em seguida essas listas sejam combinadas de modo que
+! resultem em uma lista com elementos classificados de forma
+! crescente). Por exemplo,
+!    classifMescla([5,2,3,1,7,2,5]) = [1,2,2,3,5,5,7]
+!    classifMescla([5,6,7,3,4,2,1]) = [1,2,3,4,5,6,7]
+
+classifMescla : list num -> list num;
+classifMescla([])  <= [];
+classifMescla([x]) <= [x];
+classifMescla(xs)  <= mescla(classifMescla ys, classifMescla zs)
+                     where (ys, zs) == metade xs;
+
+! (Exercício 3.14.4) Definir por recursão a função classificada tal que
+! classificada(xs) verifique se xs é uma lista classificada. Por
+! exemplo,
+!    classificada([2,3,5]) = true
+!    classificada([2,5,3]) = false
+
+classificada : list num -> truval;
+classificada []             <= true;
+classificada ([_])          <= true;
+classificada (x :: y :: xs) <= x =< y and classificada (y :: xs);
+
+! (Exercício 3.14.5) Definir por recursão a função apaga tal que
+! apaga(x,xs) seja a lista resultante após a remoção (apagamento) da
+! primeira ocorrência de x na lista xs. Por exemplo,
+!    apaga(1, [1,2,1]) = [2,1]
+!    apaga(3, [1,2,1]) = [1,2,1]
+
+apaga : num # list num -> list num;
+apaga (x, [])      <= [];
+apaga (x, y :: ys) <= if x = y then ys else y :: apaga (x, ys);
+
+! (Exercício 3.14.6) Definir por recursão a função ehPermut tal que
+! ehPermut(xs,ys) verifique se xs é permutação de ys. Por exemplo,
+!    ehPermut([1,2,1],[2,1,1]) = true
+!    ehPermut([1,2,1],[1,2,2]) = false
+
+ehPermut : list num # list num -> truval;
+ehPermut ([], [])      <= true;
+ehPermut ([], y :: ys) <= false;
+ehPermut (x :: xs, ys) <= elem (x, ys) and ehPermut (xs, apaga (x, ys));
+
+! 3.15 - Lista com elementos replicados
+! =====================================
+
+! (Exercício 3.15.1) Definir por recursão a função replicar tal que
+! replicar(n,x) seja a lista formada por n cópias do elemento x. Por
+! exemplo,
+!    replicar(3,true)     = [true,true,true]
+!    replicar(4,5  )      = [5,5,5,5]
+!    replicar(0,"abelha") = []
+
+replicar : num # alpha -> list alpha;
+replicar (0, _) <= [];
+replicar (n, x) <= x :: replicar (n - 1, x);
+
+! 3.16 - Lista dos multiplicadores de um número
+! =============================================
+
+! (Exercício 3.16.1) Definir por recursão a função multiplicadores tal
+! que multiplicadores([x],n) seja a lista formada pelos
+! multiplicadores da lista indicada em [x] a partir do número n
+! estabelecido. Por exemplo,
+!    multiplicadores([1,2,3,4],2) = [1,2]
+!    multiplicadores([1,2,3,4],3) = [1,3]
+!    multiplicadores([1,2,3,4],4) = [1,2,4]
+
+multiplicadores : list num # num -> list num;
+multiplicadores ([], n)      <= [];
+multiplicadores (x :: xs, n) <= if n mod x = 0
+                                then x :: multiplicadores (xs, n)
+                                else multiplicadores (xs, n);
+
+! 3.17 - Listagem dos dígitos de um número
+! ========================================
+
+! (Exercício 3.17.1) Definir por recursão a função digitos tal que
+! digitos(n); gere uma lista formada pelos dígitos que compões o
+! número n. Por exemplo,
+!    digitos(320274) = [3,2,0,2,7,4]
+!    digitos(123456) = [1,2,3,4,5,6]
+
+digitos' : num -> list num;
+digitos' n <= if n < 10
+              then [n]
+              else n mod 10 :: digitos' (n div 10);
+
+digitos : num -> list num;
+digitos n <= reverse (digitos' n);
+
+! 3.18 - Soma dos dígitos de um número
+! ====================================
+
+! (Exercício 3.18.1) Definir por recursão a função somaDigitos tal que
+! somaDigitos(n) seja a soma dos dígitos que forma o número n. Por
+! exemplo,
+!    somaDigitos(3)     = 3
+!    somaDigitos(2454)  = 15
+!    somaDigitos(20045) = 11
+
+somaDigitos : num -> num;
+somaDigitos n <= if n < 10
+                 then n
+                 else n mod 10 + somaDigitos (n div 10);
+
+! 3.19 - Indicar se o dígito informado faz parte do número
+! ========================================================
+
+! (Exercício 3.19.1) Definir a função temDigito tal que
+! temDigito(n,x) verifique se o dígito n faz parte do número x. Por
+! exemplo,
+!    temDigito(4, 1041) = true
+!    temDigito(3, 1041) = false
+
+temDigito : num # num -> truval;
+temDigito (n, x) <= elem (n, digitos x);
+
+! 3.20 - Quantidade de dígitos de um número
+! =========================================
+
+! (Exercício 3.20.1) Definir a função numeroDeDigitos tal que
+! numeroDeDigitos(x) mostre a quantidade de dígitos que forma o
+! número x. Por exemplo,
+!    numeroDeDigitos(34047) = 5
+
+! Solução 1:
+numeroDeDigitos : num -> num;
+numeroDeDigitos x <= length (digitos x);
+
+! Solução 2:
+numeroDeDigitos' : num -> num;
+numeroDeDigitos' x <= length (num2str x);
+
+! 3.21 - Número correspondente a partir dos dígitos de uma lista
+! ==============================================================
+
+! (Exercício 3.21.1) Definir por recursão a função listaNumero tal que
+! ListaNumero([x]) seja o número formado a partir dos elementos da
+! lista x. Por exemplo,
+!    listaNumero([5])       = 5
+!    listaNumero([1,3,4,7]) = 1347
+!    listaNumero([0,0,1])   = 1
+!    listaNumero([1,0,0])   = 100
+
+listaNumero' : list num -> num;
+listaNumero' ([x])     <= x;
+listaNumero' (x :: xs) <= x + 10 * listaNumero' xs;
+
+listaNumero : list num -> num;
+listaNumero xs <= listaNumero' (reverse xs);
+
+! 3.22 - Primeiro dígito de um número
+! ===================================
+
+! (Exercício 3.22.1) Definir por recursão a função primeiroDigito tal
+! que primeiroDigito(n) retorne o primeiro dígito do número n. Por
+! exemplo,
+!    primeiroDigito(425) = 4
+
+primeiroDigito : num -> num;
+primeiroDigito n <= if n < 10 then n else primeiroDigito (n div 10);
+
+! 3.23 - Dígitos invertidos de um número
+! ======================================
+
+! (Exercício 3.23.1) Definir a função inversoNum tal que
+! inversoNum(n) retorne o número n informado de forma invertida. Por
+! exemplo,
+!    inversoNum(42578) = 87524
+!    inversoNum(203)   = 302
+
+inversoNum : num -> num;
+inversoNum n <= listaNumero (reverse (digitos n));
+
+! 3.24 - Verificar se um número é capicúa
+! =======================================
+
+! (Exercício 3.24.1) Definir a função capicua tal que capicua(n)
+! verifique se o número n possui os mesmo ditos da direita para a
+! esquerda e da esquerda para a direita tendendo ao centro.  Por
+! exemplo,
+!    capicua(1234)  = false
+!    capicua(1221)  = true
+!    capicua(4)     = true
+!    capicua(12321) = true
+
+capicua : num -> truval;
+capicua n <= n = inversoNum n;
+
+! 3.25 - Produto dos dígitos de um número
+! =======================================
+
+! (Exercício 3.25.1) Definir a função produto tal que produto(n)
+! retorne o resultado da multiplicação dos dígitos que formam o número
+! n. Por exemplo,
+!    produto(327) = 42
+!    produto(123) = 6
+
+produto : num -> num;
+produto n <= product (digitos n);
+
+! 3.26 - Primitivo de um número
+! =============================
+
+! (Exercício 3.26.1) O primitivo de um número é obtido a partir da
+! multiplicação dos dígitos que compõe esse número até que reste um só
+! dígito, o qual é chamado de primitivo do número inicial. Considerando
+! o número 327 decompondo-o na multiplicação de 3 x 2 x 7 obtém-se 42,
+! que por sua vez sendo decomposto na multiplicação de 4 x 2 tem-se ao
+! final o valor 8. Deste modo, 8 é primitivo de 327. Assim sendo,
+! definida por recursão a função a primitivo tal que primitivo(n)
+! apresente o primitivo do número n. Por exemplo,
+!    primitivo(327) = 8
+!    primitivo(123) = 6
+
+primitivo : num -> num;
+primitivo n <= if n < 10 then n else primitivo (produto n);
+
+! 3.27 - Números com média igual aos seus dígitos
+! ===============================================
+
+! (Exercício 3.27.1) Dois números são equivalentes se a média de seus
+! dígitos forem iguais. Por exemplo, 3205 e 41 são equivalentes já que:
+!
+! Definir a função equivalentes tal que equivalentes(x,y) verifique
+! se os números x e y são equivalentes. Por exemplo,
+!    equivalentes(3205,41) = true
+!    equivalentes(3205,25) = false
+
+equivalentes : num # num -> truval;
+equivalentes (x, y) <= media (digitos x) = media (digitos y);
+
+! 3.28 - Intervalo numérico entre valores de uma lista
+! ====================================================
+
+! (Exercício 3.28.1) Definir a função entre tal que entre(m,n) seja
+! uma lista de números entre m e n. Por exemplo,
+!    entre(2,5) = [2,3,4,5]
+!    entre(1,6) = [1,2,3,4,5,6]
+
+entre : num # num -> list num;
+entre (m, n) <= if m > n then [] else m :: entre (m + 1, n);
+
+! 3.29 - Limite numérico dentro de certa faixa
+! ============================================
+
+! (Exercício 3.29.1) Definir por recursão a função naFaixa tal que
+! naFaixa(a,b,[xs]) seja uma lista dos elementos de xs maiores ou
+! iguais a a e menores ou iguais a b. Por exemplo,
+!    naFaixa(5,10,1..5) = [5,6,7,8,9,10]
+!    naFaixa(10,5,1..5) = []
+!    naFaixa(5,5,1..5)  = [5]
+
+naFaixa : num # num # list num -> list num;
+naFaixa (a, b, [])      <= [];
+naFaixa (a, b, x :: xs) <= if a =< x and x =< b
+                           then x :: naFaixa (a, b, xs)
+                           else naFaixa (a, b, xs);;
+
+! 3.30 - Substituição de impar pelo próximo par
+! =============================================
+
+! (Exercício 3.30.1) Definir por recursão a função substitImpar tal que
+! substitImpar([xs]) seja uma lista cujo cada número impar seja
+! substituído pelo próxima número par. Por exemplo,
+!    substitImpar([2,5,7,4]) = [2,6,8,4]
+
+substitImpar : list num -> list num;
+substitImpar []        <= [];
+substitImpar (x :: xs) <= if odd x
+                          then (x + 1) :: substitImpar xs
+                          else x :: substitImpar xs;
+
+! 3.31 - Expansão da fatoração de um número
+! =========================================
+
+! (Exercício 3.31.1) Definir por recursão a função expansao tal que
+! expansao([(a,b)]) seja a expansão da fatoração de uma lista de
+! tuplas (a,b). Por exemplo,
+!    expansao([(2,2),(3,1),(5,1)]) = 60
+
+expansao : list (num # num) -> num;
+expansao []             <= 1;
+expansao ((x, y) :: zs) <= pow (x, y) * expansao zs;
+
+! 3.32 - Soma dos dígitos de uma cadeia
+! =====================================
+
+! (Exercício 3.32.1) Definir por recursão a função somaDigitosCadeia tal
+! que somaDigitosCadeia([texto]) é a soma dos dígitos existente na
+! cadeia texto. Usar para a operação as funções Nota: isgigit y
+! digitToInt. Por exemplo,
+!    somaDigitosCadeia("12345")     = 15
+!    somaDigitosCadeia("SE 2431 X") = 15
+
+somaDigitosCadeia : list char -> num;
+somaDigitosCadeia []        <= 0;
+somaDigitosCadeia (x :: xs) <= if isDigit x
+                               then digitToInt x + somaDigitosCadeia xs
+                               else somaDigitosCadeia xs;
+
+! 3.33 - Capitalização de uma cadeia
+! ==================================
+
+! (Exercício 3.33.1) Definir a função maiuscInicial tal que
+! maiuscInicial([texto]) seja a apresentação do primeiro caractere da
+! cadeia texto em maiúsculo e os demais caracteres da cadeia em
+! minúsculo. Por exemplo,
+!    maiuscInicial("aUgusto") = "Augusto"
+!    maiuscInicial("sEviLLa") = "Sevilla"
+
+! Solução:
+! Existem muitas formas de resolver esta proposta de operação. Foi
+! optado uma maneira simples a partir da definição de duas funções
+! especializadas, sendo a primeira destibada a escrever toda a cadeia em
+! letras maiúsculas e a segun da em escrever toda a cadeia em letras
+! minúsculas.
+
+tudoMaiusculo : list char -> list char;
+tudoMaiusculo []        <= [];
+tudoMaiusculo (x :: xs) <= toUpper x :: tudoMaiusculo xs;
+
+tudoMinusculo : list char -> list char;
+tudoMinusculo []        <= [];
+tudoMinusculo (x :: xs) <= toLower x :: tudoMinusculo xs;
+
+! A partir das funções tudoMaiusculo e tudoMinusculo fica fácil escrever
+! uma função que capitalize apenas o primeiro caractere de uma cadeia.
+
+maiuscInicial : list char -> list char;
+maiuscInicial []        <= [];
+maiuscInicial (x :: xs) <= toUpper x :: tudoMinusculo xs;
+
+! 3.34 - Número de zeros finais
+! =============================
+
+! (Exercício 3.34.1) Definir por recursão a função zeros tal que
+! zeros([n]) seja o número de zeros que aparecem no final do número
+! n. Por exemplo,
+!    zeros(30500) = 2
+!    zeros(30501) = 0
+
+zeros : num -> num;
+zeros n <= if n mod 10 = 0 then 1 + zeros (n div 10) else 0;
+
+! 3.35 - Aplicação iterada de função
+! ==================================
+
+! (Exercício 3.35.1) Definir por recursão a função potenciaFunc tal que
+! PotenciaFunc(n,f,x) seja o resultado da aplicação da função f por n
+! sobre x. Por exemplo,
+!    potenciaFunc(3,(*10),5) = 5000
+!    potenciaFunc(4,(+10),5) = 45
+
+potenciaFunc : num # (alpha -> alpha) # alpha -> alpha;
+potenciaFunc (0, _, x) <= x;
+potenciaFunc (n, f, x) <= potenciaFunc (n - 1, f, f x);
+
+! 3.36 - Soma dos primeiros números impares
+! =========================================
+
+! (Exercício 3.36.1) Definir por recursão a função somaImpares tal que
+! somaImpares (n) seja a soma dos primeiro n números impares. Por
+! exemplo,
+!    somaImpares(5) = 35
+
+somaImpares : num -> num;
+somaImpares 0 <= 0;
+somaImpares n <= 2 * n + 1 + somaImpares (n - 1);
+
+! 3.37 - Um mais a soma das potências de dois
+! ===========================================
+
+! (Exercício 3.37.1) Definir por recursão a função somaPotenciasde2mais1
+! tal que somaPotenciasde2mais1(n) seja igual a 1 + 2⁰ + 2¹ + 2² + ... + 2^n.
+! Por exemplo,
+!    somaPotenciasde2mais1(3) = 16
+
+somaPotenciasde2mais1 : num -> num;
+somaPotenciasde2mais1 0 <= 2;
+somaPotenciasde2mais1 n <= pow (2, n) + somaPotenciasde2mais1 (n - 1);
+
+! 3.38 - Lista de números impares
+! ===============================
+
+! (Exercício 3.38.1) Definir a função impares tal que impares([xs})
+! verifique se determinada lista xs informada para a função é formada
+! por elementos impares. Por exemplo,
+!    impares([1,3,5])   = true
+!    impares([1,3,5,6]) = false
+
+impares : list num -> truval;
+impares n <= odd (listaNumero n);
+
+! 3.39 - Inversão de tuplas
+! =========================
+
+! (Exercício 3.39.1) Definir a função inverteTuplas tal que
+! inverteTuplas([(a,b)]) apresente uma lista de tuplas com seus
+! elementos invertidos. Por exemplo,
+!    inverteTuplas([(1,2),(3,4)]) = [(2,1),(4,3)]
+
+! Solução 1:
+inverteTuplas : list (num # num) -> list (num # num);
+inverteTuplas []        <= [];
+inverteTuplas (x :: xs) <= (snd x, fst x) :: inverteTuplas xs;
+
+! Solução 2:
+inverteTuplas' : list (num # num) -> list (num # num);
+inverteTuplas' []            <= [];
+inverteTuplas' ((x, y) :: xs) <= (y, x) :: inverteTuplas' xs;
+
+! (Exercício 3.39.2) Definir a função tuplasInvertidas tal que
+! tuplasInvertidas([(a,b)]) apresente uma lista de tuplas com seus
+! elementos invertidos em sentido oposto a ordem original. Por exemplo,
+!    tuplasInvertidas([(1,2),(3,4)]) = [(4,3),(2,1)]
+
+tuplasInvertidas : list (num # num) -> list (num # num);
+tuplasInvertidas [] <= [];
+tuplasInvertidas xs <= reverse (inverteTuplas xs);

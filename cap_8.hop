@@ -1,0 +1,259 @@
+! Capítulo 8 – Operações com conjuntos
+! ====================================
+
+uses cap_7;
+
+! Este capítulo apresenta exercícios para a definição de conjuntos
+! representados a partir de listas ordenadas (não significa que os
+! elementos estejam classificados) sem repetições de elementos numéricos
+! (elementos repetidos dentro de um conjunto são considerados o mesmo
+! elemento).
+
+! 8.1 - Definições operacionais básicas
+! =====================================
+
+! (Base 8.1.1) Para os exercícios deste capítulo são usados os seguintes
+! exemplos de conjuntos:
+c1 : list num;
+c1 <= [0, 1, 2, 3, 5, 7, 9];
+c2 : list num;
+c2 <= [1, 2, 6, 8, 9];
+c3 : list num;
+c3 <= 2 .. 100000;
+c4 : list num;
+c4 <= 1 .. 100000;
+
+! (Base 8.1.2) Definição de conjunto vazio:
+!    vazio = nil
+
+vazio : list num;
+vazio <= [];
+
+! (Base 8.1.3) Reconhecimento de conjunto vazio:
+!    estaVazio(c1)    = false
+!    estaVazio(vazio) = true
+
+estaVazio : list num -> truval;
+estaVazio xs <= xs = nil;
+
+! (Base 8.1.4) Pertencimento de elemento em um conjunto:
+!    pertence(3, c1) = true
+!    pertence(4, c1) = false
+
+pertence : num # list num -> truval;
+pertence (_, [])      <= false;
+pertence (a, x :: xs) <= a = x or pertence (a, xs);
+
+! (Base 8.1.5) Remoção de duplicidades ou mais de elementos em um conjunto:
+!    unico([1,1,2,2,3,3,4]) = [1, 2, 3, 4]
+!    unico(c1 <> c2)        = [0, 3, 5, 7, 1, 2, 6, 8, 9] : list num
+
+unico : list num -> list num;
+unico [] <= [];
+unico (x :: xs) <= if member (x, xs)
+                   then unico xs
+                   else x :: unico xs;
+
+! (Base 8.1.6) Inserção sem repetição de elemento em um conjunto:
+!    insere(1,c1) = [0, 1, 2, 3, 5, 7, 9]
+!    insere(4,c1) = [0, 1, 2, 3, 4, 5, 7, 9]
+
+insere : num # list num -> list num;
+insere (n, []) <= [n];
+insere (n, x :: xs) <= if n < x then n :: x :: xs else
+                       if n = x then x :: xs else
+                       x :: insere (n, xs);
+
+! (Base 8.1.7) Remoção de elemento em um conjunto:
+!    remova(1,c1) = [0, 2, 3, 5, 7, 9]
+!    remova(4,c1) = [0, 1, 2, 3, 5, 7, 9]
+
+remova : num # list num -> list num;
+remova (n, xs) <= filter ((/= n), xs);
+
+! 8.2 - Reconhecimento de subconjunto
+! ===================================
+
+! (Exercício 8.2.1) Definir a função subConjunto tal que
+! subConjunto([c1],[c2]) verifique se todos os elementos de c1
+! pertencem a c2. Por exemplo,
+!    subConjunto(2..100,1..100) = true
+!    subConjunto(1..100,2..100) = false
+
+subConjunto : list num # list num -> truval;
+subConjunto ([], _)       <= true;
+subConjunto (_, [])       <= false;
+subConjunto (x :: xs, ys) <= elem (x, ys) and subConjunto (xs, ys);
+
+! 8.3 - Reconhecimento de subconjunto próprio
+! ===========================================
+
+! (Exercício 8.3.1) Definir a função subConjPropio tal que
+! subConjPropio([c1],[c2]) verifique se o conjunto c1’ é um
+! subconjunto próprio de c2. Por exemplo,
+!    subConjPropio(2..5,1..7) = true
+!    subConjPropio(2..5,1..4) = false
+!    subConjPropio(2..5,2..5) = false
+
+subConjPropio : list num # list num -> truval;
+subConjPropio (c1, c2) <= subConjunto (c1, c2) and c1 /= c2;
+
+! 8.4 - Conjunto unitário
+! =======================
+
+! (Exercício 8.4.1) Definir a função unitario tal que unitario(x)
+! seja o conjunto {x}, neste caso representado como [x]. Dica: usar 
+! como apoio as funções insere e vazio. Por exemplo,
+!    unitario(5) = [5]
+
+unitario : num -> list num;
+unitario x <= insere (x, vazio);
+
+! (Exercício 8.4.2) Definir a função unitario' tal que unitario'(x)
+! seja o conjunto {x}, neste caso representado como [x]. Dica: realize 
+! a operação de maneira direta sem o apoio de qualquer função. 
+! Por exemplo,
+!    unitario'(5) = [5]
+
+unitario' : num -> list num;
+unitario' x <= [x];
+
+! 8.5 - Cardinal de um conjunto
+! =============================
+
+! (Exercício 8.5.1) Definir a função cardinal tal que cardinal(c) 
+! seja o número de elementos do conjunto c. Dica: use internamente 
+! a lista passada como argumento explícito na ação. Por exemplo,
+!    cardinal(c1) = 7
+!    cardinal(c2) = 5
+
+cardinal : list num -> num;
+cardinal xs <= length xs;
+
+! (Exercício 8.5.2) Definir a função cardinal tal que cardinal(c)
+! seja o número de elementos do conjunto c. Dica: use internamente 
+! a lista passada como argumento implícito na açã . Por exemplo,
+!    cardinal'(c1) = 7
+!    cardinal'(c2) = 5
+
+cardinal' : list num -> num;
+cardinal' <= length;
+
+
+! 8.6 - União de conjuntos
+! ========================
+
+! Definir a função uniao tal que uniao([c1],[c2]) seja a união 
+! dos elementos existentes nos conjutos “c1” e “c2” com apoio 
+! de ação de concatenação. Dica: usar como auxilio as funções unico 
+! para remover repetições de elementos e sort para classificar os 
+! elementos existentes no conjunuo resultante. Por exemplo,
+!    uniao(c1,c2)            = [0,1,2,3,5,6,7,8,9]
+!    cardinal(uniao (c1,c2)) = 9
+
+uniao : list num # list num -> list num;
+uniao (c1, c2) <= sort (unico (c1 <> c2));
+
+! (Exercício 8.6.2) Definir a função uniao’ tal que uniao’([c1],[c2])
+! seja a união dos elemen-tos existentes nos conjutos “c1” e “c2” com 
+! apoio de uma função auxiliar chamada junte tal que junte([c1],[c2])
+! efetue a junção de todos os elementos dos conjuntos “c1” e “c2”. Dica:
+! usar como auxilio as funções unico para remover repetições de
+! elementos e sort para classificar os elementos existentes no conjunuo
+! resultante. Por exemplo,
+!    uniao'(c1,c2) =              [0,1,2,3,5,6,7,8,9]
+!    cardinal' (uniao' (c1,c2)) = 9
+
+junte : list num # list num -> list num;
+junte ([], [])     <= [];
+junte (a, [])      <= a;
+junte ([], b)      <= b;
+junte (a :: ax, b) <= a :: junte (ax, b);
+
+uniao' : list num # list num -> list num;
+uniao' (c1, c2) <= sort (unico (junte (c1, c2)));
+
+! 8.7 - Intersecção de conjuntos
+! ==============================
+
+! (Exercício 8.7.1) Definir a função interseccao tal que
+! interseccao([c1],[c2]) seja a intersecção dos conjuntos c1 e
+! c2. Por exemplo,
+!    interseccao(1..7,4..9)   = [4,5,6,7]
+!    interseccao(c1,c2)       = [1,2,9]
+
+interseccao : list num # list num -> list num;
+interseccao (xs, []) <= [];
+interseccao ([], ys) <= [];
+interseccao (x :: xs, y :: ys) <=
+  if x < y then interseccao (xs, y :: ys) else
+  if x = y then x :: interseccao (xs, ys) else
+  interseccao (x :: xs, ys);
+
+! 8.8 - Disjunção de conjuntos
+! ============================
+
+! (Exercício 8.8.1) Definir a função disjuntos tal que
+! disjuntos([c1],[c2]) verifique se os conjuntos c1 e c2 são
+! disjuntos. Por exemplo,
+!    disjuntos(2..5,6..9) = true
+!    disjuntos(2..5,1..9) = false
+
+disjuntos : list num # list num -> truval;
+disjuntos (c1, c2) <= estaVazio (interseccao (c1, c2));
+
+! 8.9 - Diferenca simétrica de conjuntos
+! =====================================
+
+! (Exercício 8.9.1) Definir a função difSimetrica tal que
+! difSimetrica([c1],[c2]) seja a diferença simétrica entre os
+! conjuntos c1 e c2 são disjuntos. Por exemplo,
+!    difSimetrica(c1,c2) = [0,3,5,6,7,8]
+!    difSimetrica(c2,c1) = [0,3,5,6,7,8]
+
+difSimetrica : list num # list num -> list num;
+difSimetrica (c1, c2) <= diferenca (uniao (c1, c2), interseccao (c1, c2));
+
+! 8.10 - Filtragem de conjuntos
+! =============================
+
+! (Exercício 8.10.1) Definir a função filtra tal que filtra(p,[c])
+! seja o conjunto de elementos de c que atendam ao predicado p. 
+! Dica: usar argumentos explícitos. Por exemplo,
+!    filtra(even,c1) = [0,2]
+!    filtra(odd,c1)  = [1,3,5,7,9]
+
+filtra : (num -> truval) # list num -> list num;
+filtra (p, c) <= sort (filter (p, c));
+
+! (Exercício 8.10.2) Definir a função filtra' tal que filtra'(p,[c])
+! seja o conjunto de elementos de c que atendam ao predicado p. 
+! Dica: usar argumentos implícitos. Por exemplo,
+!    filtra'(even,c1) = [0,2]
+!    filtra'(odd,c1)  = [1,3,5,7,9]
+
+filtra' : (num -> truval) # list num -> list num;
+filtra' <= filter;
+
+! 8.11 - Aplicação de função sobre os elementos de um conjunto
+! ============================================================
+
+! (Exercício 8.11.1) Definir a função mapConj tal que mapConj(f,[c])
+! seja o conjunto formado pelos elementos de c operacionalizados a
+! partir da função f. Por exemplo,
+!     mapConj((\x => 6 - x),1..4) = [2, 3, 4, 5]
+
+mapConj : (alpha -> alpha) # list alpha -> list alpha;
+mapConj (f, c) <= sort (map (c, f));
+
+! 8.12 - Igualdade de conjuntos
+! =============================
+
+! (Exercício 8.12.1) Definir a função igualConj tal que
+! igualConj([c1],[c2]) verifique se os conjuntos c1 e c2 são
+! iguais. Por exemplo,
+!    igualConj(1..4,[1,2,3,4]) = true
+!    igualConj(1..4,[1,2,5,4]) = false
+
+igualConj : list num # list num -> truval;
+igualConj (xs, ys) <= subConjunto (xs, ys) and subConjunto (ys, xs);

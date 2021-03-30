@@ -1,0 +1,348 @@
+! Capítulo 4: Definições por compreensão
+
+uses cap_3;
+
+! Considere para os exercícios deste capítulo a definição de algumas
+! funções auxiliares para a simulação de ações de compreensão a partir
+! de funções recursivas:
+
+compNum : (alpha -> beta) # list alpha -> list beta;
+compNum (funcao, [])      <= [];
+compNum (funcao, x :: xs) <= funcao x :: compNum (funcao, xs);
+
+compTri : (num -> list num) # list num -> list (list num);
+compTri (funcao, [])      <= [];
+compTri (funcao, x :: xs) <= funcao x :: compTri (funcao, xs);
+
+! 4.1 - Soma dos quadrados dos primeiros n números
+! ================================================
+
+! (Exercício 4.1.1) Definir por compreensão a função somaDosQuadrados de
+! tal modo que somaDosQuadrados(n) seja a soma dos quadrados dos n
+! primeiros números, ou seja, 1^2 + 2^2 + ... + n^2 a partir da
+! operação: ∑ [x ^ 2 | x <- [1..n]]. Por exemplo,
+!    somaDosQuadrados(3)   = 14
+!    somaDosQuadrados(100) = 338350
+
+somaDosQuadrados : num -> num;
+somaDosQuadrados n <= sum (compNum (\x => pow (x, 2), 1 .. n));
+
+! 4.2 - Triângulos aritméticos
+! ============================
+
+! 1. Somatório dos valores de 1 até n
+! 2. Linha de um triângulo aritmético
+! 3. Calculo para formação de um triângulo aritmético
+
+! (Exercício 4.2.1) Definir a função soma de modo que soma(n) seja a
+! soma dos n primeiros números. Por exemplo,
+!    soma(3)   = 6
+!    soma(100) = 5050
+
+! Solução 1:
+soma : num -> num;
+soma n <= sum (1 .. n);
+
+! Solução 2:
+soma' : num -> num;
+soma' n <= (1 + n) * n div 2;
+
+! (Exercício 4.2.2) Um triângulo aritmético é formado pela estrutura
+! numérica:
+!    1
+!    2 3
+!    4 5 6
+!    7 8 9 10
+!    11 12 13 14 15
+!    16 17 18 19 20 21
+!
+! Definir a função linha de tal modo que [linha(n);] seja a enésima
+! linha de certo triângulo aritmético. Por exemplo,
+!    linha(4) = [7,8,9,10]
+!    linha(5) = [11,12,13,14,15]
+
+linha : num -> list num;
+linha n <= soma (n - 1) + 1 .. soma n;
+
+! (Exercício 4.2.3) Definir a função triangArit tal que triangArit(n)
+! seja um triângulo aritmético de altura n a partir da operação:
+! [linha m | m <- [1..n]]. Por exemplo,
+!    triangArit(3) = [[1],[2,3],[4,5,6]]
+!    triangArit(2) = [[1],[2,3]]
+
+triangArit : num -> list (list num);
+triangArit n <= compTri (linha, 1 .. n);
+
+! 4.3 - Números perfeitos
+! =======================
+
+! (Exercício 4.3.1) Um número inteiro positivo é perfeito quando a soma
+! de seus fatores é igual a ele, excluindo-se o próprio número. Definir
+! por compreensão a função perfeitos tal que perfeitos(n) seja a lista
+! de todos os número perfeitos menores que n. Por exemplo,
+!    perfeitos(500) = [6,28,496]
+
+! Para solucionar esta questão é necessário possuir uma função que
+! calcule os fatores de determinado valor. Observe a função
+! perfeitos(n) que apresenta uma lista dos fatores do número
+! indicado. Praver os fatores de 15 basta executar fatores(15); e será
+! apresentada a lista [1,3,5,15] a partir da operação:
+! [x | x <- [1..n], n mod x = 0].
+
+
+fatores : num -> list num;
+fatores n <= filter (\x => n mod x = 0, 1 .. n);
+
+! Após a definição da função fatores passa-se a definição da função
+! [perfeitos(n);] a partir da operação: [x | x <- [1..n], sum (init
+! (fatores x)) = x].
+
+perfeitos : num -> list num;
+perfeitos n <= filter (\x => sum (init (fatores x)) = x, 1 .. n);
+
+! 4.4 - Números amigos
+! ====================
+
+! (Exercício 4.4.1) Dois números são amigos quando o somatório de cada
+! um de seus fatores (divisores), excetuando-se o próprio valor é igual
+! ao outro.  Definir a função amigo tal que amigo(n) seja a indicação
+! verdadeira se dado dois números estes forem amigos entre si. Por
+! exemplo,
+!    amigos(220,284) = true
+!    amigos(221,283) = false
+
+amigos : num # num -> truval;
+amigos (x, y) <= sum (fatores x) - x = y and sum (fatores y) - y = x;
+
+! 4.5 - Números abundantes
+! ========================
+
+! Um número natural n é chamado de abundante se for menor que a soma de
+! seus divisores, excluindo-se o próprio número. Por exemplo, 12 e 30
+! são abundantes, mas 5 e 28 não são.
+! 1. Verificar número abundante
+! 2. Números abundantes menores que certo limite
+! 3. Números abundantes pares
+! 4. Primeiro abundante impar
+
+! (Exercício 4.5.1) Definir a função numeroAbundante tal que
+! [numeroAbundante(n);] verifique se dado número n este é ou não
+! abundante. Por exemplo,
+!    numeroAbundante(5)  = false
+!    numeroAbundante(12) = true
+!    numeroAbundante(28) = false
+!    numeroAbundante(30) = true
+!
+! Para a realização da operação de verificação se dado valor é ou não
+! abundante é necessário considerar a função divisores tal que
+! divisores(n) apresente uma lista dos valores divisores de n.
+
+divisores : num -> list num;
+divisores n <= filter (\m => n mod m = 0, 1 .. n);
+
+! Após a definição da função divisores passa-se a definição da função
+! que validará se número é ou não abundante. Observe a função
+! numeroAbundante (n).
+
+numeroAbundante : num -> truval;
+numeroAbundante n <= n < sum (divisores n) - n;
+
+! (Exercício 4.5.2) Definir a função numerosAbundantesMenores tal que
+! numerosAbundantesMenores(n) seja uma lista de números abundantes
+! menores e iguais a n. Por exemplo,
+!    numerosAbundantesMenores(50) = [12,18,20,24,30,36,40,42,48]
+
+numerosAbundantesMenores : num -> list num;
+numerosAbundantesMenores n <= filter (numeroAbundante, 1 .. n);
+
+! (Exercício 4.5.3) Definir a função todosPares tal que todosPares(n)
+! verifique se os números abundantes menores ou iguais a n são pares. Por
+! exemplo,
+!    todosPares(10)   = true
+!    todosPares(100)  = true
+!    todosPares(1000) = false
+
+todosPares : num -> truval;
+todosPares n <= and'(compNum(even,numerosAbundantesMenores n));
+
+! (Exercício 4.5.4) Definir a constante primerAbundanteImpar que retorne
+! o valor do primeiro número natural abundante ímpar. Determinar o valor
+! do dito número.
+
+primerAbundanteImpar : num;
+primerAbundanteImpar <= head (filter (odd,numerosAbundantesMenores 140000));
+
+! O valor 140.000 definido para a função numerosAbundantesMenores
+! refere-se a um valor de segurança máximo para evitar estouro de
+! memória. O cálculo da operação é:
+!    >: primerAbundanteImpar;
+!    >> 945 : num
+
+! 4.6 - Fatores primos
+! ====================
+
+! Número primo caracteriza-se por ser um valor natural divisível por 1 e
+! por ele mesmo. É sabido que os números naturais maiores que 1 podem
+! ser decompostos em fatores. Os fatores primos de um número são os
+! números primos que dividem exatamente esse número. Assim sendo,
+! determine os fatores primos de um determinado número inteiro
+! positivo. Os fatores primos do número 112 são 2, 2, 2, 2 e 7. Neste a
+! função deve retornar a lista apenas com os números [2, 7].
+
+! (Exercício 4.6.1) Definir a função fatoresPrimos tal que
+! fatoresPrimos(n) seja uma lista de números que são os fatores
+! primos de n. Por exemplo,
+!    fatoresPrimos(112) = [2,7]
+!    fatoresPrimos(220) = [2,5,11]
+!    fatoresPrimos(360) = [2,3,5]
+
+checaPrimo : num -> truval;
+checaPrimo n <= fatores n = [1, n];
+
+fatoresPrimos : num -> list num;
+fatoresPrimos n <= filter (checaPrimo, fatores n);
+
+! 4.7 - Aproximação do número "e"
+! ===============================
+
+! (Exercício 4.7.1) Definir a função aproxE tal que aproxE(n); seja a
+! lista cujos elementos são os termos da sucessão (1 + 1/m) ^ m, desde 1
+! até n. Por exemplo,
+!    aproxE(1) = [2]
+!    aproxE(2) = [2,2.25]
+!    aproxE(3) = [2,2.25,2.37037037037037]
+
+aproxE : num -> list num;
+aproxE n <= compNum(\m => pow (1 + 1 / m, m),1..n);
+
+! (Exercício 4.7.2) Qual é o limite da sucessão (1 + 1/m) ^ m?
+
+! Solução:
+! O limite da sucessão é o número e.
+
+! (Exercício 4.7.3) Definir a função errorE tal que errorE(x) seja o
+! menor número de termos da sucessão (1 + 1/m) ^ m necessários para
+! obter seu limite com um erro menor que x. Por exemplo,
+!    errorE(0.1)   = 13
+!    errorE(0.01)  = 135
+!    errorE(0.001) = 1359
+
+errorE : num -> num;
+errorE (x) <= head (filter (\m => abs (exp(1)) - pow(1+1/m,m) < x, from(1)));
+
+! (Exercício 4.7.4) O número e pode ser definido a partir da soma da
+! série:
+!
+! Definir a função aproxE' tal que aproxE'(n) seja a aproximação de e
+! obtida a partir da soma dos termos da série até 1/n! . Por exemplo,
+!    aproxE'(10)  = 2.71828180114638
+!    aproxE'(100) = 2.71828182845905
+
+fatorial : num -> num;
+fatorial n <= product (1 .. n);
+
+aproxE' : num -> num;
+aproxE' n <= 1 + sum (compNum (\k => 1 / fatorial k, 1 .. n));
+
+! (Exercício 4.7.5) Definir a constante e como 2,71828459:
+
+e : num;
+e <= 2.71828459;
+
+! (Exercício 4.7.6) Definir a função errorE' tal que errorE'(x) seja o
+! menor número de termos da série anterior necessária para obter o
+! número e com erro menor que x. Por exemplo,
+!    errorE'(0.1)    = 3
+!    errorE'(0.01)   = 4
+!    errorE'(0.001)  = 6
+!    errorE'(0.0001) = 7
+
+errorE' : num -> num;
+errorE' x <= head (filter (\n => abs (aproxE' n - e) < x, from 1));
+
+! 4.8 - Aproximação de limite
+! ===========================
+
+! (Exercício 4.8.1) Definir a função aproxLimSeno tal que
+! aproxLimSeno(n) seja a lista cujos elementos são os termos da sucessão
+! (sen(1/m))/(1/m) de 1 até n. Por exemplo,
+!    aproxLimSeno(1) = [0.841470984807897]
+!    aproxLimSeno(2) = [0.841470984807897, 0.958851077208406]
+
+aproxLimSeno : num -> list num;
+aproxLimSeno n <= compNum (\m => sin (1 / m) / (1 / m), 1 .. n);
+
+! (Exercício 4.8.2) Qual é o limite da sucessão (sen(1/m))/(1/m)?
+
+! Solução:
+! O limite da sucessão é 1.
+
+! (Exercício 4.8.3) Definir a função errorLimSeno tal que
+! errorLimSeno(x) seja o menor número de termos da sucessão
+! (sen(1/m))/(1/m) necessários para obter seu limite com um erro menor
+! que x. Por exemplo,
+!    errorLimSeno(0.1)    = 2
+!    errorLimSeno(0.01)   = 5
+!    errorLimSeno(0.001)  = 13
+!    errorLimSeno(0.0001) = 41
+
+errorLimSeno : num -> num;
+errorLimSeno x <= head (filter (\m => abs (1 - sin (1 / m) / (1 / m)) < x, from 1));
+
+! 4.9 - Cálculo do número π
+! =========================
+
+! (Exercício 4.9.1) Definir a função calculaPi tal que calculaPi(n)
+! seja a aproximação do número π calculado mediante a expressão:
+!    4 ^(1 -1/3 + 1/5 - 1/7 + ··· + (-1)^n/(2*n+1))
+! Por exemplo,
+!    calculaPi(3)   = 2.8952380952381
+!    calculaPi(300) = 3.14491490355885
+
+calculaPi : num -> num;
+calculaPi n <= 4 * sum (compNum (\x => pow (0-1, x) / (2*x+1),0..n));
+
+! (Exercício 4.9.2) Definir a função errorPi tal que errorPi(x) seja
+! o menor número de termos da série necessários para obter π com erro
+! menor que x. Por exemplo,
+!    errorPi(0.1)   = 9
+!    errorPi(0.01)  = 99
+!    errorPi(0.001) = 999
+
+errorPi : num -> num;
+errorPi x <= head (filter (\n => abs (pi - calculaPi n) < x, from 1));
+
+! 4.10 - Número de fatores de uma fatoração
+! =========================================
+
+! Fatoração é a decomposição de um número em fatores primos, ou seja,
+! escrever um número por meio da multiplicação de números primos. Na
+! fatoração usa-se os números primos de modo crescente de acordo com as
+! regras de divisibilidade em razão do termo a ser fatorado.  A
+! fatoração do número 60 resulta na obtenção dos valores 2, 2, 3 e 5.
+! Para gerar o número de fatores de uma fatoração é importante ter em
+! mãos algumas funções que auxiliem a operação.
+
+menorFator : num -> num;
+menorFator n <= head (filter (\x => multiplo (n, x), from 2));
+
+fatoracao : num -> list num;
+fatoracao n <= if n = 1
+               then []
+               else x :: fatoracao (n div x)
+               where x == menorFator n;
+
+! A função menorFator retorna o valor do menor fator primo de um número
+! N e a função fatoracao apresenta a lista de todos os fatores ´rimos de
+! n.
+
+! (Exercício 4.10.1) Definir a função numerosDeFatoracao de modo que
+! numerosDeFatoracao(n) seja um conjunto formado pelos valores primos
+! dos números da fatoração de n iniciados em 1 sem a ocorrência de
+! repetições de valores na lista, Por exemplo,
+!    menorFator(60)         = 2
+!    fatoracao(60)          = [2,2,3,5]
+!    numerosDeFatoracao(60) = [1,2,3,5]
+
+numerosDeFatoracao : num -> list num;
+numerosDeFatoracao n <= 1 :: unique (fatoracao n);

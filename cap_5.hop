@@ -1,0 +1,300 @@
+! Capítulo 5 – Definições por recursão e compreensão
+
+uses cap_4;
+
+! 5.1 - Cálculo do número π
+! =========================
+
+! (Exercício 5.1.1) Definir por recursão a função somaQuadradosR tal que
+! somaQuadradoR(n) seja a soma dos quadrados do números de 1 até
+! n. Por exemplo,
+!    somaQuadradosR(4) = 30
+
+somaQuadradosR : num -> num;
+somaQuadradosR 0 <= 0;
+somaQuadradosR n <= pow (n, 2) + somaQuadradosR (n - 1);
+
+! (Exercício 5.1.2) Definir por compreensão a função somaQuadradosC tal
+! que somaQuadradoC(n) seja a soma dos quadrados do números de 1 até
+! n. Por exemplo,
+!    somaQuadradosC(4) = 30
+
+somaQuadradosC : num -> num;
+somaQuadradosC n <= sum (compNum (\x => pow (x, 2), 1 .. n));
+
+! 5.2 - Número de blocos em escadas triangulares
+! ==============================================
+
+! (Exercício 5.2.1) Você quer formar uma escada com blocos quadrados, de
+! modo quese tenha um número determinado de camadas. Por exemplo, uma
+! escada com três camadas terá a seguinte forma:
+!        XX
+!      XXXX
+!    XXXXXX
+!
+! Definir por recursão a função numeroCamadasR tal que
+! numeroCamadasR(n) apresente o número de camadas necessárias para
+! construir a escada triangular com n camadas. Por exemplo,
+!    numeroCamadasR(1)  = 2
+!    numeroCamadasR(3)  = 12
+!    numeroCamadasR(10) = 110
+
+numeroCamadasR : num -> num;
+numeroCamadasR 0 <= 0;
+numeroCamadasR n <= 2 * n + numeroCamadasR (n - 1);
+
+! (Exercício 5.2.2) Definir por compreensão a função numeroCamadasC tal
+! que numeroCamadasC(n) apresente o número de camadas necessárias
+! para construir a escada triangular com n camadas. Por exemplo,
+!    numeroCamadasC(1)  = 2
+!    numeroCamadasC(3)  = 12
+!    numeroCamadasC(10) = 110
+
+numeroCamadasC : num -> num;
+numeroCamadasC n <= sum (compNum ((*2), 1 .. n));
+
+! 5.3 - Soma dos quadrados dos ímpares entre os primeiros números
+! ===============================================================
+
+! (Exercício 5.3.1) Definir por recursão a função somaQuadImparesR tal
+! que somaQuadImparesR(n) seja a soma dos quadrados do números de 1
+! até n. Por exemplo,
+!    somaQuadImparesR(1) = 1
+!    somaQuadImparesR(7) = 84
+!    somaQuadImparesR(4) = 10
+
+somaQuadImparesR : num -> num;
+somaQuadImparesR 1 <= 1;
+somaQuadImparesR n <= if odd n
+                      then pow (n, 2) + somaQuadImparesR (n - 1)
+                      else somaQuadImparesR (n - 1);
+
+! (Exercício 5.3.2) Definir por compreensão a função somaQuadImparesC
+! tal que somaQuadImparesC(n) seja a soma dos quadrados do números de
+! 1 até n. Por exemplo,
+!    somaQuadImparesC(1) = 1
+!    somaQuadImparesC(7) = 84
+!    somaQuadImparesC(4) = 10
+
+somaQuadImparesC : num -> num;
+somaQuadImparesC n <= sum (listPow (2,
+filter (\x => odd (pow (x, 2)), 1 .. n)));
+
+! 5.4 - Quadrados dos elementos de uma lista
+! ==========================================
+
+! (Exercício 5.4.1) Definir por recursão a função quadradosR tal que
+! quadradosR([xs]) seja a lista dos elementos de xs ao quadrado. Por
+! exemplo,
+!    quadradosR([1,2,3]) = [1,4,9]
+
+quadradosR : list num -> list num;
+quadradosR []        <= [];
+quadradosR (x :: xs) <= pow (x, 2) :: quadradosR xs;
+
+! (Exercício 5.4.2) Definir por compreensão a função quadradosC de modo
+! que [quadradosC([xs]);] seja a lista dos elementos de xs ao
+! quadrado. Por exemplo,
+!    quadradosC([1,2,3]) = [1,4,9]
+
+quadradosC : list num -> list num;
+quadradosC xs <= compNum (\x => pow (x, 2), xs);
+
+! 5.5 - Números impares de una lista
+! ==================================
+
+! (Exercício 5.5.1) Definir por recursão a função imparesR tal que
+! imparesR([xs]) seja a lista dos números impares de xs. Por exemplo,
+!    imparesR([1,2,4,3,6]) = [1,3]
+!    imparesR(1..6)        = [1,3,5]
+
+imparesR : list num -> list num;
+imparesR []        <= [];
+imparesR (x :: xs) <= if odd x
+                      then x :: imparesR xs
+                      else imparesR xs;
+
+! (Exercício 5.5.2) Definir por compreensão a função imparesC tal que
+! imparesC([xs]) seja a lista dos números impares de xs. Por exemplo,
+!    imparesC([1,2,4,3,6]) = [1,3]
+!    imparesC(1..6) = [1,3,5]
+
+imparesC : list num -> list num;
+imparesC xs <= filter (odd, xs);
+
+! 5.6 - Quadrado dos elementos impares
+! ====================================
+
+! (Exercício 5.6.1) Definir por recursão a função imparesQuadR de modo
+! que imparesQuadR([xs]) seja a lista dos quadrados impares de
+! xs. Por exemplo,
+!    imparesQuadR([1,2,4,3,6]) = [1,9]
+
+imparesQuadR : list num -> list num;
+imparesQuadR []        <= [];
+imparesQuadR (x :: xs) <= if odd x
+                          then pow (x, 2) :: imparesQuadR xs
+                          else imparesQuadR xs;
+
+! (Exercício 5.6.2) Definir por compreensão a função imparesQuadC de
+! modo que imparesQuadC([xs]) seja a lista dos quadrados impares de
+! xs. Por exemplo,
+!    imparesQuadR([1,2,4,3,6]) = [1,9]
+
+imparesQuadC : list num -> list num;
+imparesQuadC xs <= listPow (2, filter (odd, xs));
+
+! 5.7 - Soma dos quadrados dos elementos impares
+! ==============================================
+
+! (Exercício 5.7.1) Definir por recursão a função somaQuadImpR de modo
+! que somaQuadImpR([xs]) seja a soma da lista dos quadrados impares
+! de xs. Por exemplo,
+!    somaQuadImpR([1,2,4,3,6]) = 10
+
+somaQuadImpR : list num -> num;
+somaQuadImpR [] <= 0;
+somaQuadImpR (x :: xs) <= if odd x
+                          then pow (x, 2) + somaQuadImpR xs
+                          else somaQuadImpR xs;
+
+! (Exercício 5.7.2) Definir por compreensão a função somaQuadImpC de
+! modo que [somaQuadImpC([xs]);] seja a soma da lista dos quadrados
+! impares de xs. Por exemplo,
+!    somaQuadImpC([1,2,4,3,6]) = 10
+
+somaQuadImpC : list num -> num;
+somaQuadImpC xs <= sum (listPow (2, filter (odd, xs)));
+
+! 5.8 - Metade dos elementos pares
+! ================================
+
+! Para auxiliar parte desta operação considere a função listdiv tal que
+! listdiv([xs,n]) seja uma lista dos números de xs divididos por n.
+
+listdiv : list num # num -> list num;
+listdiv ([], _)      <= [];
+listdiv (x :: xs, n) <= x / n :: listdiv (xs, n);
+
+! (Exercício 5.8.1) Definir por recursão a função metadeParesR de modo
+! que [metadeParesR([xs]);] seja uma lista resultantes dos elementos
+! pares de xs. Por exemplo,
+!    metadeParesR([0,2,1,8,5,6,9]) = [0, 1, 4, 3]
+
+metadeParesR : list num -> list num;
+metadeParesR []        <= [];
+metadeParesR (x :: xs) <= if even x
+                          then x / 2 :: metadeParesR xs
+                          else metadeParesR xs;
+
+! (Exercício 5.8.2) Definir por compreensão a função metadeParesC de
+! modo que metadeParesC([xs]) seja uma lista resultantes dos
+! elementos pares de xs. Por exemplo,
+!    metadeParesC([0,2,1,8,5,6,9]) = [0, 1, 4, 3]
+
+metadeParesC : list num -> list num;
+metadeParesC xs <= listdiv (filter (even, xs), 2);
+
+! 5.9 - Aproximação do número π
+! =============================
+
+! A soma da série
+!    1/1² + 1/2² + 1/3³ + 1/4² + ···
+! é igual a (π ^ 2 / 6). Por tanto, π pode ser aproximado mediante a
+! raiz quadrada de 6 pela soma da série. Por exemplo,
+
+! (Exercício 5.9.1) Definir por recursão a função aproximaPiR tal que
+! aproximaPi(n) seja a aproximação de π obtido a partir da dos n
+! termos da série. Por exemplo,
+!    aproximaPiR(4)    = 2.92261298612503
+!    aproximaPiR(1000) = 3.14063805620599
+
+aproximaPiR' : num -> num;
+aproximaPiR' 1 <= 1;
+aproximaPiR' n <= 1 / pow (n, 2) + aproximaPiR' (n - 1);
+
+aproximaPiR : num -> num;
+aproximaPiR n <= sqrt (6 * aproximaPiR' n);
+
+! (Exercício 5.9.2) Definir por compreensão a função aproximaPiC tal que
+! aproximaPiC(n) seja uma lista resultantes dos elementos pares de
+! xs. Por exemplo,
+!    aproximaPiC(4)    = 2.92261298612503
+!    aproximaPiC(1000) = 3.14063805620599
+
+aproximaPiC : num -> num;
+aproximaPiC n <= sqrt (6 * sum (compNum (\x => 1 / pow (x, 2), 1 .. n)));
+
+! 5.10 - A compra com desconto
+! ============================
+
+! Certa pessoa somente compra algo quando consegue pechinchar um
+! desconto de 10% e o preço de aquisição (com o desconto) é menor ou
+! igual a 199.
+
+! (Exercício 5.10.1) Definir por recursão a função sovinaR tal que
+! sovinaR([ps]) seja o preço máximo a ser pago por uma compra cuja
+! lista de preços seja ps. Por exemplo,
+!    sovinaR([45,199,220,399]) = 417.6
+
+sovinaR : list num -> num;
+sovinaR []        <= 0;
+sovinaR (p :: ps) <= if precoComDesconto =< 199
+                     then precoComDesconto + sovinaR ps
+                     else sovinaR ps
+                     where precoComDesconto == p * 0.9;
+
+! (Exercício 5.10.2) Definir por compreensão a função sovinaR tal que
+! sovinaR([ps]) seja o preço máximo a ser pago por uma compra cuja
+! lista de preços seja ps. Por exemplo,
+!    sovinaC([45,199,220,399]) = 417.6
+
+sovinaC : list num -> num;
+sovinaC ps <= sum (filter (\p => p * 0.9 =< 199,
+                           compNum (\p => p * 0.9, ps)));
+
+! 5.11 - Expoente da maior potência de um número que divide outro número
+! ======================================================================
+
+! (Exercício 5.11.1) Definir por recursão a função maiorExpoenteR tal
+! que maiorExpoenteR(a,b) é o expoente de maior potência de a que
+! divide a b. Por exemplo,
+!    maiorExpoenteR(2,8)  = 3
+!    maiorExpoenteR(2,60) = 2
+
+maiorExpoenteR : num # num -> num;
+maiorExpoenteR (a, b) <= if b mod a /= 0
+                         then 0
+                         else 1 + maiorExpoenteR (a, b div a);
+
+! (Exercício 5.11.2) Definir por recursão a função maiorExpoenteC tal
+! que maiorExpoenteC(a,b) é o expoente de maior potência de a que
+! divide a b. Por exemplo,
+!    maiorExpoenteC(2,8)  = 3
+!    maiorExpoenteC(2,60) = 2
+
+maiorExpoenteC : num # num -> num;
+maiorExpoenteC (a, b) <= head (filter (\x => b mod pow (a, x) /= 0,
+                                       compNum (\x => x - 1, from 1))) - 1;
+
+! 5.12 - Soma de elementos apenas positivos
+! =========================================
+
+! (Exercício 5.12.1) Definir por recursão a função somaPositivosC tal que
+! somaPositivosC([xs] seja a soma apenas dos elementos positivos de “xs”. 
+! Por exemplo,
+!    somaPositivosC([1,0-3,3,6]) = 10
+
+somaPositivosR : list num -> num;
+somaPositivosR []        <= 0;
+somaPositivosR (x :: xs) <= if x > 0 
+                            then x + somaPositivosR xs 
+                            else somaPositivosR xs;
+
+! (Exercício 5.12.2) Definir por recursão a função somaPositivosR tal que
+! somaPositivosR([xs] seja a soma apenas dos elementos positivos de “xs”. 
+! Por exemplo,
+!    somaPositivosR([1,0-3,3,6]) = 10
+
+somaPositivosC : list num -> num;
+somaPositivosC xs <= sum (filter (lambda x => x > 0, xs));

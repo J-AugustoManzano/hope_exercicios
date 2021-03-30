@@ -1,4 +1,4 @@
-# hope
+# Hope Language - Functional Programming
 Linguagem Hope - Código fonte do livro "Lógica de programação funcional: Pense em Hope"
 
 English

@@ -11,4 +11,4 @@ Un conjunto de códigos (scripts) escritos en lenguaje Hope están disponibles p
 
 Português:
 
-São disponibilizados o conjunto de códigos (scripts) escritos em linguagem Hope pra o livro “Lógica de programação funcional: Pense em Hope” disponível para aquisição gratuita no endereço https://novo.manzano.pro.br/wp/download/logica-de-programacao-funcional-pense-em-hope/.
+São disponibilizados o conjunto de códigos (scripts) escritos em linguagem Hope para o livro “Lógica de programação funcional: Pense em Hope” disponível para aquisição gratuita no endereço https://novo.manzano.pro.br/wp/download/logica-de-programacao-funcional-pense-em-hope/.

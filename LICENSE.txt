@@ -1,14 +1,20 @@
 English
 =======
 
-This material is licensed under the same conditions as the book "Lógica de programação funcional: Pense em Hope (Exercícios de programação funcional com Hope)" by José A. Alonso Jiménez, María J. Hidalgo Doblado, José Augusto N. G. Manzano,that is, according to license: CC BY-NC-SA 2.5 ES.
+This material is licensed under the same conditions as the book 
+"Lógica de programação funcional: Pense em Hope (Exercícios de programação funcional com Hope)" 
+by José A. Alonso Jiménez, María J. Hidalgo Doblado, José Augusto N. G. Manzano,that is, according to license: CC BY-NC-SA 2.5 ES.
 
 Español
 =======
 
-Este material está licenciado en las mismas condiciones que el libro "Lógica de programación funcional:"Lógica de programação funcional: Pense em Hope (Exercícios de programação funcional com Hope)" de José A. Alonso Jiménez, María J. Hidalgo Doblado, José Augusto N. G. Manzano, es decir, según licencia: CC BY-NC-SA 2.5 ES.
+Este material está licenciado en las mismas condiciones que el libro 
+"Lógica de programación funcional:"Lógica de programação funcional: Pense em Hope (Exercícios de programação funcional com Hope)" 
+de José A. Alonso Jiménez, María J. Hidalgo Doblado, José Augusto N. G. Manzano, es decir, según licencia: CC BY-NC-SA 2.5 ES.
 
 Português
 =========
 
-Este material está licenciado nas mesmas condições do livro "Lógica de programação funcional: Pense em Hope (Exercícios de programação funcional com Hope)" de José A. Alonso Jiménez, María J. Hidalgo Doblado, José Augusto N. G. Manzano, ou seja, segundo a licença: CC BY-NC-SA 2.5 ES.
+Este material está licenciado nas mesmas condições do livro 
+"Lógica de programação funcional: Pense em Hope (Exercícios de programação funcional com Hope)" 
+de José A. Alonso Jiménez, María J. Hidalgo Doblado, José Augusto N. G. Manzano, ou seja, segundo a licença: CC BY-NC-SA 2.5 ES.

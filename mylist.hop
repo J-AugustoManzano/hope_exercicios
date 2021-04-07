@@ -267,12 +267,6 @@ charToInt x <= ord (x);
 infix and1 : 2;
 infix and2 : 2;
 
-     and1 : truval # truval -> truval;
-true and1 true <= true;
-_    and1 _    <= false;
 
-     and2 : truval # truval -> truval;
-true and2 x <= x;
-_    and2 _ <= false;
 
 

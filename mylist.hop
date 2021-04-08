@@ -96,6 +96,27 @@ length : list alpha -> num;
 length []        <= 0;
 length (x :: xs) <= 1 + length xs;
 
+all : (alpha -> truval) # list alpha -> truval;
+all (_, [])      <= true;
+all (p, x :: xs) <= p x and all (p, xs);
+
+any : (alpha -> truval) # list alpha -> truval;
+any (_, [])      <= false;
+any (p, x :: xs) <= p x or any (p, xs); 
+
+takeWhile : (alpha -> truval) # list alpha -> list alpha;
+takeWhile (_, [])      <= [];
+takeWhile (p, x :: xs) <= if p x 
+                          then x :: takeWhile (p, xs) 
+                          else [];
+
+
+dropWhile : (alpha -> truval) # list alpha -> list alpha;
+dropWhile (_, [])      <= [];
+dropWhile (p, x :: xs) <= if p x 
+                          then dropWhile (p, xs) 
+                          else x :: xs;
+
 gcd : num # num -> num;
 gcd (0, n) <= n;
 gcd (m, n) <= gcd (floor n mod floor m, m);
@@ -130,24 +151,24 @@ elem (x, [])      <= false;
 elem (x, y :: ys) <= x = y or elem (x, ys);
 
 filter : (alpha -> truval) # list alpha -> list alpha;
-filter (f, [])      <= [];
-filter (f, x :: xs) <= if f x 
-                       then x :: filter (f, xs) 
-                       else filter (f, xs);
+filter (_, [])      <= [];
+filter (p, x :: xs) <= if p x 
+                       then x :: filter (p, xs) 
+                       else filter (p, xs);
 
-map : list alpha # (alpha -> alpha) -> list alpha;
-map ([], f) <= [];
+map : list alpha # (alpha -> beta) -> list beta;
+map ([], _)      <= [];
 map (x :: xs, f) <= f x :: map (xs, f);
 
 reduce : list alpha # (alpha # alpha -> alpha) # alpha -> alpha;
-reduce ([], f, n) <= n;
+reduce ([], f, n)      <= n;
 reduce (x :: xs, f, n) <= f (x, reduce (xs, f, n));
 
-dec comp : list alpha # (alpha -> truval) -> list alpha;
---- comp ([], f) <= [];
---- comp (x :: xs, f) <= if f x 
-                         then x :: comp (xs, f)
-                         else comp (xs, f);
+comp : list alpha # (alpha -> truval) -> list alpha;
+comp ([], f) <= [];
+comp (x :: xs, f) <= if f x 
+                     then x :: comp (xs, f)
+                     else comp (xs, f);
 
 even : num -> truval;
 even n <= n mod 2 = 0;

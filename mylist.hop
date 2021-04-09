@@ -2,7 +2,10 @@
 ! Scripts auxiliares para a realização dos exercicios !
 ! =================================================== !
 
-! operates numerical ranges up to 140000 (safety limit).
+infix and1 : 2;
+infix and2 : 2;
+
+! opera com faixas numéricas até 140000 (limite de segurança).
 infix .. : 4;
 .. : num # num -> list num;
 n..m <= if n > m 
@@ -11,13 +14,17 @@ n..m <= if n > m
              then error ("Final limit allowed: 140000")
              else n :: (succ n .. m);
 
-! maximum allowed limit for infinity = 140000.
+! limite máximo permitido para infinito = 140000 (limite de segurança).
 from : num -> list num;
 from (n) <= if n > 140000
             then error ("Maximum limit to infinity: 140000")
             else n .. 140000;
-pi : num;
-pi <= acos(0)*2;
+
+! a cláusula "dec" neste ponto é obrigatória pelo fato de estar sendo
+! definida mais de uma função na mesma linha.
+dec e, pi : num;   
+--- e  <= exp 1;
+--- pi <= acos 0 * 2;
 
 pred : num -> num;
 pred 0     <= 0;
@@ -31,7 +38,7 @@ min (x, y) <= if x < y then x else y;
 
 signum : num -> num;
 signum n <= if n < 0 then 0-1 else 
-               if n = 0 then 0 else 1;
+            if n = 0 then 0 else 1;
 
 const : alpha -> beta -> alpha;
 const x _ <= x;
@@ -64,14 +71,14 @@ take (0, xs)      <= [];
 take (n, x :: xs) <= x :: take (n - 1, xs);
 
 minimum : list alpha -> alpha;
-minimum []             <= error ("Lista vazia!");
+minimum []             <= error ("Empty list!");
 minimum ([x])          <= x;
 minimum (x :: y :: xs) <= if x < y 
                           then minimum (x :: xs) 
                           else minimum (y :: xs);
 
 maximum : list alpha -> alpha;
-maximum []             <= error ("Lista vazia!");
+maximum []             <= error ("Empty list!");
 maximum ([x])          <= x;
 maximum (x :: y :: xs) <= if x > y 
                           then maximum (x :: xs) 
@@ -176,13 +183,20 @@ even n <= n mod 2 = 0;
 odd : num -> truval;
 odd n <= n mod 2 /= 0;
 
-foldr : (alpha # alpha -> alpha) # alpha # list alpha -> alpha;
-foldr (f, n, [])      <= n;
-foldr (f, n, x :: xs) <= f (x, foldr (f, n, xs));
+foldr : (alpha # beta -> beta) # beta # list alpha -> beta;
+foldr (f, v, [])      <= v;
+foldr (f, v, x :: xs) <= f (x, foldr (f, v, xs));
 
-foldl : (alpha # alpha -> alpha) # alpha # list alpha -> alpha;
-foldl (f, n, [])      <= n;
-foldl (f, n, x :: xs) <= foldl (f, f (n, x), xs);
+foldl : (alpha # beta -> alpha) # alpha # list beta -> alpha;
+foldl (f, v, [])      <= v;
+foldl (f, v, x :: xs) <= foldl (f, f (v, x), xs);
+
+concat : list (list alpha) -> list alpha;
+concat []        <= [];
+concat (x :: xs) <= x <> concat xs;
+
+concat2lst : list alpha # list alpha -> list alpha;
+concat2lst (xs, ys) <= foldr ((::), ys, xs);
 
 product : list num -> num;
 product xs <= foldl ((*), 1, xs);
@@ -211,6 +225,11 @@ insert (n, [])      <= [n];
 insert (n, x :: xs) <= if n =< x 
                        then n :: x :: xs 
                        else x :: insert (n, xs);
+
+dec repeat : num # alpha -> list alpha;
+--- repeat (n, a) <= if n = 0 
+                     then []
+                     else a :: repeat (n - 1, a);
 
 sort : list alpha -> list alpha;
 sort []        <= [];
@@ -284,10 +303,3 @@ digitToChar x <= chr (x + 48);
 
 charToInt : char -> num;
 charToInt x <= ord (x);
-
-infix and1 : 2;
-infix and2 : 2;
-
-
-
-

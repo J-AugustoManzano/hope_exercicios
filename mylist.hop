@@ -1,11 +1,37 @@
-! =================================================== !
-! Scripts auxiliares para a realização dos exercicios !
-! =================================================== !
+! .*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*. !
+!                                                         !
+! Scripts auxiliares para a realização de demonstrações e !
+! exercícios.                                             !
+!                                                         !
+! Material de apoio aos livros:                           !
+!                                                         !
+! * - Programe em Hope  (livro com demonstrações)         !
+! * - Pense em Hope     (livro com exercícios resolvidos) !
+!                                                         !
+! Ambos os livros podem ser adquiridos gratuitamente no   !
+! sítio: manzano.pro.br - Selecione "DOWNLOADS" e escolha !
+! o material desejado.                                    !
+!                                                         !
+! .*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*. !
 
-infix and1 : 2;
-infix and2 : 2;
 
-! opera com faixas numéricas até 140000 (limite de segurança).
+!! CONSTANTES PARA USO GERAL
+!! =========================
+
+!! a cláusula "dec" é obrigatória somente quando se define 
+!! mais de uma função na mesma linha.
+
+dec e, pi : num;   
+--- e  <= exp 1;
+--- pi <= acos 0 * 2;
+
+
+!! FUNÇÕES DE USO GERAL (ABORDAGEM SIMPLES)
+!! ========================================
+
+!! Opera listas com faixas numéricas até 140000,
+!! (limite de segurança).
+
 infix .. : 4;
 .. : num # num -> list num;
 n..m <= if n > m 
@@ -14,21 +40,31 @@ n..m <= if n > m
              then error ("Final limit allowed: 140000")
              else n :: (succ n .. m);
 
-! limite máximo permitido para infinito = 140000 (limite de segurança).
+!! Limite máximo permitido para simulação de listas 
+!! "infinitas" => 140000 (limite de segurança).
+
 from : num -> list num;
 from (n) <= if n > 140000
             then error ("Maximum limit to infinity: 140000")
             else n .. 140000;
 
-! a cláusula "dec" neste ponto é obrigatória pelo fato de estar sendo
-! definida mais de uma função na mesma linha.
-dec e, pi : num;   
---- e  <= exp 1;
---- pi <= acos 0 * 2;
+const : alpha -> beta -> alpha;
+const x _ <= x;
 
-pred : num -> num;
-pred 0     <= 0;
-pred (n+1) <= n;
+even : num -> truval;
+even n <= n mod 2 = 0;
+
+fst : (alpha # beta) -> alpha;
+fst (x,_) <= x;
+
+gcd : num # num -> num;
+gcd (0, n) <= n;
+gcd (m, n) <= gcd (floor n mod floor m, m);
+
+lcm : num # num -> num;
+lcm (_, 0) <= 0;
+lcm (0, _) <= 0;
+lcm (x, y) <= x * y div gcd (x, y);
 
 max : alpha # alpha -> alpha;
 max (x, y) <= if x > y then x else y;
@@ -36,72 +72,85 @@ max (x, y) <= if x > y then x else y;
 min : alpha # alpha -> alpha;
 min (x, y) <= if x < y then x else y;
 
+odd : num -> truval;
+odd n <= n mod 2 /= 0;
+
+pred : num -> num;
+pred 0     <= 0;
+pred (n+1) <= n;
+
+quotRem : num # num -> (num # num);
+quotRem (a,b) <= (a div b, a mod b);
+
 signum : num -> num;
 signum n <= if n < 0 then 0-1 else 
             if n = 0 then 0 else 1;
 
-const : alpha -> beta -> alpha;
-const x _ <= x;
+snd : (alpha # beta) -> beta;
+snd (_,y) <= y;
 
-index : num # list num -> num;
-index (_, []) <= error "Index out of range!";
-index (0, x :: xs) <= x;
-index (n, x :: xs) <= index (n - 1, xs);
 
-null : list alpha -> truval;
-null []     <= true;
-null (_::_) <= false;
+!! FUNÇÕES PARA O TRATAMENTO DE CADEIAS (STRINGS)
+!! ==============================================
 
-head : list alpha -> alpha;
-head []       <= error ("Empty list!");
-head (x :: _) <= x;
+isAscii : char -> truval;
+isAscii c <= ord c < 128;
 
-tail : list alpha -> list alpha;
-tail []        <= error ("Empty list!");
-tail (_ :: xs) <= xs;
+isLower : char -> truval;
+isLower c <= 'a' =< c and c =< 'z';
 
-drop : num # list alpha -> list alpha;
-drop (0, xs)      <= xs;
-drop (n, [])      <= [];
-drop (n, x :: xs) <= drop (n - 1, xs);
+isUpper : char -> truval;
+isUpper c <= 'A' =< c and c =< 'Z';
 
-take : num # list alpha -> list alpha;
-take (n, [])      <= [];
-take (0, xs)      <= [];
-take (n, x :: xs) <= x :: take (n - 1, xs);
+isAlpha : char -> truval;
+isAlpha c <= isLower c or isUpper c;
 
-minimum : list alpha -> alpha;
-minimum []             <= error ("Empty list!");
-minimum ([x])          <= x;
-minimum (x :: y :: xs) <= if x < y 
-                          then minimum (x :: xs) 
-                          else minimum (y :: xs);
+isDigit : char -> truval;
+isDigit c <= '0' =< c and c =< '9';
 
-maximum : list alpha -> alpha;
-maximum []             <= error ("Empty list!");
-maximum ([x])          <= x;
-maximum (x :: y :: xs) <= if x > y 
-                          then maximum (x :: xs) 
-                          else maximum (y :: xs);
+isAlphaNum : char -> truval;
+isAlphaNum c <= isAlpha c or isDigit c;
 
-last : list alpha -> alpha;
-last ([x])     <= x;
-last (x :: xs) <= last xs;
+isHexDigit : char -> truval;
+isHexDigit c <= isDigit c or 'a' =< c and c =< 'f' or 'A' =< c and c =< 'F';
 
-init : list alpha -> list alpha;
-init ([x])     <= [];
-init (x :: xs) <= x :: init xs;
+isOctDigit : char -> truval;
+isOctDigit c <= isDigit c or '0' =< c and c =< '7';
 
-reverseAux : list alpha # list alpha -> list alpha;
-reverseAux([], ys)    <= ys;
-reverseAux(x::xs, ys) <= reverseAux(xs, x::ys);
+isGraph : char -> truval;
+isGraph c <= ' ' =< c and c =< '~';
 
-reverse : list alpha -> list alpha;
-reverse xs <= reverseAux(xs, []);
+isControl : char -> truval;
+isControl c <= isAscii c and not (isGraph c);
 
-length : list alpha -> num;
-length []        <= 0;
-length (x :: xs) <= 1 + length xs;
+isPunct : char -> truval;
+isPunct c <= isGraph c and c /= ' ' and not (isAlphaNum c);
+
+isSpace : char -> truval;
+isSpace c <= c = ' ' or c = '\t' or c = '\n';
+
+toLower : char -> char;
+toLower c <= if isUpper c then chr (ord c + 32) else c;
+
+toUpper : char -> char;
+toUpper c <= if isLower c then chr (ord c - 32) else c;
+
+
+!! FUNÇÕES DE CONVERSÃO DE DADOS
+!! =============================
+
+charToInt : char -> num;
+charToInt x <= ord (x);
+
+digitToChar : num -> char;
+digitToChar x <= chr (x + 48);
+
+digitToInt : char -> num;
+digitToInt x <= ord x - 48;
+
+
+!! FUNÇÕES PARA MANIPULAÇÃO DE LISTAS
+!! ==================================
 
 all : (alpha -> truval) # list alpha -> truval;
 all (_, [])      <= true;
@@ -111,12 +160,20 @@ any : (alpha -> truval) # list alpha -> truval;
 any (_, [])      <= false;
 any (p, x :: xs) <= p x or any (p, xs); 
 
-takeWhile : (alpha -> truval) # list alpha -> list alpha;
-takeWhile (_, [])      <= [];
-takeWhile (p, x :: xs) <= if p x 
-                          then x :: takeWhile (p, xs) 
-                          else [];
+comp : list alpha # (alpha -> truval) -> list alpha;
+comp ([], f) <= [];
+comp (x :: xs, f) <= if f x 
+                     then x :: comp (xs, f)
+                     else comp (xs, f);
+                     
+concat : list (list alpha) -> list alpha;
+concat []        <= [];
+concat (x :: xs) <= x <> concat xs;
 
+drop : num # list alpha -> list alpha;
+drop (0, xs)      <= xs;
+drop (n, [])      <= [];
+drop (n, x :: xs) <= drop (n - 1, xs);
 
 dropWhile : (alpha -> truval) # list alpha -> list alpha;
 dropWhile (_, [])      <= [];
@@ -124,23 +181,126 @@ dropWhile (p, x :: xs) <= if p x
                           then dropWhile (p, xs) 
                           else x :: xs;
 
-gcd : num # num -> num;
-gcd (0, n) <= n;
-gcd (m, n) <= gcd (floor n mod floor m, m);
+elem : alpha # list alpha -> truval;
+elem (x, [])      <= false;
+elem (x, y :: ys) <= x = y or elem (x, ys);
 
-sum : list num -> num;
-sum []        <= 0;
-sum (x :: xs) <= x + sum xs;
+member : alpha # list alpha -> truval;
+member <= elem;
+
+filter : (alpha -> truval) # list alpha -> list alpha;
+filter (_, [])      <= [];
+filter (p, x :: xs) <= if p x 
+                       then x :: filter (p, xs) 
+                       else filter (p, xs);
+
+length : list alpha -> num;
+length []        <= 0;
+length (x :: xs) <= 1 + length xs;
+
+getPos : alpha # list alpha -> num;
+getPos (_, [])      <= error ("Element does not exist in the list!");
+getPos (n, x :: xs) <= if n = x 
+                       then length xs 
+                       else getPos (n, xs);
+
+reverseAux : list alpha # list alpha -> list alpha;
+reverseAux([], ys)    <= ys;
+reverseAux(x::xs, ys) <= reverseAux(xs, x::ys);
+
+reverse : list alpha -> list alpha;
+reverse xs <= reverseAux(xs, []);
+
+find : alpha # list alpha -> num;
+find (_, [])      <= error ("Empty list!");
+find (n, x :: xs) <= getPos (n, reverse (x :: xs));
+
+foldl : (alpha # beta -> alpha) # alpha # list beta -> alpha;
+foldl (f, v, [])      <= v;
+foldl (f, v, x :: xs) <= foldl (f, f (v, x), xs);
+
+foldr : (alpha # beta -> beta) # beta # list alpha -> beta;
+foldr (f, v, [])      <= v;
+foldr (f, v, x :: xs) <= f (x, foldr (f, v, xs));
+
+concat2lst : list alpha # list alpha -> list alpha;
+concat2lst (xs, ys) <= foldr ((::), ys, xs);
+
+head : list alpha -> alpha;
+head []       <= error ("Empty list!");
+head (x :: _) <= x;
+
+index : num # list num -> num;
+index (_, []) <= error "Index out of range!";
+index (0, x :: xs) <= x;
+index (n, x :: xs) <= index (n - 1, xs);
+
+init : list alpha -> list alpha;
+init ([x])     <= [];
+init (x :: xs) <= x :: init xs;
+
+insert : alpha # list alpha -> list alpha;
+insert (n, [])      <= [n];
+insert (n, x :: xs) <= if n =< x 
+                       then n :: x :: xs 
+                       else x :: insert (n, xs);
+
+last : list alpha -> alpha;
+last ([x])     <= x;
+last (x :: xs) <= last xs;
+
+listPow : num # list num -> list num;
+listPow (_, [])      <= [];
+listPow (n, x :: xs) <= pow (x, n) :: listPow (n, xs);
+
+maximum : list alpha -> alpha;
+maximum []             <= error ("Empty list!");
+maximum ([x])          <= x;
+maximum (x :: y :: xs) <= if x > y 
+                          then maximum (x :: xs) 
+                          else maximum (y :: xs);
+
+minimum : list alpha -> alpha;
+minimum []             <= error ("Empty list!");
+minimum ([x])          <= x;
+minimum (x :: y :: xs) <= if x < y 
+                          then minimum (x :: xs) 
+                          else minimum (y :: xs);
+
+map : list alpha # (alpha -> beta) -> list beta;
+map ([], _)      <= [];
+map (x :: xs, f) <= f x :: map (xs, f);
+
+null : list alpha -> truval;
+null []     <= true;
+null (_::_) <= false;
+
+product : list num -> num;
+product xs <= foldl ((*), 1, xs);
 
 range : num # num # num -> list num;
 range (i, f, p) <= if i > f 
                    then [] 
                    else i :: range (i + p, f, p);
 
-lcm : num # num -> num;
-lcm (_, 0) <= 0;
-lcm (0, _) <= 0;
-lcm (x, y) <= x * y div gcd (x, y);
+reduce : list alpha # (alpha # alpha -> alpha) # alpha -> alpha;
+reduce ([], f, n)      <= n;
+reduce (x :: xs, f, n) <= f (x, reduce (xs, f, n));
+
+repeat : num # alpha -> list alpha;
+repeat (n, a) <= if n = 0 
+                 then []
+                 else a :: repeat (n - 1, a);
+
+sort : list alpha -> list alpha;
+sort []        <= [];
+sort (x :: xs) <= insert (x, sort xs);
+
+
+take : num # list alpha -> list alpha;
+take (n, [])      <= [];
+take (0, xs)      <= [];
+take (n, x :: xs) <= x :: take (n - 1, xs);
 
 splitAt : num # list alpha -> list alpha # list alpha;
 splitAt (n, xs) <= (take (n, xs), drop (n, xs));
@@ -151,92 +311,21 @@ splitAt' (_, [])      <= ([], []);
 splitAt' (n, y :: ys) <= if n < 0 
                          then ([], y :: ys) 
                          else (y :: a, b) 
-                         where (a, b) == splitAt' (n - 1, ys);
+                         where (a, b) == splitAt' (n - 1, ys);    
+                 
+sum : list num -> num;
+sum []        <= 0;
+sum (x :: xs) <= x + sum xs;                 
+                 
+tail : list alpha -> list alpha;
+tail []        <= error ("Empty list!");
+tail (_ :: xs) <= xs;
 
-elem : alpha # list alpha -> truval;
-elem (x, [])      <= false;
-elem (x, y :: ys) <= x = y or elem (x, ys);
-
-filter : (alpha -> truval) # list alpha -> list alpha;
-filter (_, [])      <= [];
-filter (p, x :: xs) <= if p x 
-                       then x :: filter (p, xs) 
-                       else filter (p, xs);
-
-map : list alpha # (alpha -> beta) -> list beta;
-map ([], _)      <= [];
-map (x :: xs, f) <= f x :: map (xs, f);
-
-reduce : list alpha # (alpha # alpha -> alpha) # alpha -> alpha;
-reduce ([], f, n)      <= n;
-reduce (x :: xs, f, n) <= f (x, reduce (xs, f, n));
-
-comp : list alpha # (alpha -> truval) -> list alpha;
-comp ([], f) <= [];
-comp (x :: xs, f) <= if f x 
-                     then x :: comp (xs, f)
-                     else comp (xs, f);
-
-even : num -> truval;
-even n <= n mod 2 = 0;
-
-odd : num -> truval;
-odd n <= n mod 2 /= 0;
-
-foldr : (alpha # beta -> beta) # beta # list alpha -> beta;
-foldr (f, v, [])      <= v;
-foldr (f, v, x :: xs) <= f (x, foldr (f, v, xs));
-
-foldl : (alpha # beta -> alpha) # alpha # list beta -> alpha;
-foldl (f, v, [])      <= v;
-foldl (f, v, x :: xs) <= foldl (f, f (v, x), xs);
-
-concat : list (list alpha) -> list alpha;
-concat []        <= [];
-concat (x :: xs) <= x <> concat xs;
-
-concat2lst : list alpha # list alpha -> list alpha;
-concat2lst (xs, ys) <= foldr ((::), ys, xs);
-
-product : list num -> num;
-product xs <= foldl ((*), 1, xs);
-
-zip : list alpha # list beta -> list (alpha # beta);
-zip ([], _)            <= [];
-zip (_, [])            <= [];
-zip (x :: xs, y :: ys) <= (x, y) :: zip (xs, ys);
-
-getPos : alpha # list alpha -> num;
-getPos (_, [])      <= error ("Element does not exist in the list!");
-getPos (n, x :: xs) <= if n = x 
-                       then length xs 
-                       else getPos (n, xs);
-
-find : alpha # list alpha -> num;
-find (_, [])      <= error ("Empty list!");
-find (n, x :: xs) <= getPos (n, reverse (x :: xs));
-
-listPow : num # list num -> list num;
-listPow (_, [])      <= [];
-listPow (n, x :: xs) <= pow (x, n) :: listPow (n, xs);
-
-insert : alpha # list alpha -> list alpha;
-insert (n, [])      <= [n];
-insert (n, x :: xs) <= if n =< x 
-                       then n :: x :: xs 
-                       else x :: insert (n, xs);
-
-dec repeat : num # alpha -> list alpha;
---- repeat (n, a) <= if n = 0 
-                     then []
-                     else a :: repeat (n - 1, a);
-
-sort : list alpha -> list alpha;
-sort []        <= [];
-sort (x :: xs) <= insert (x, sort xs);
-
-member : alpha # list alpha -> truval;
-member <= elem;
+takeWhile : (alpha -> truval) # list alpha -> list alpha;
+takeWhile (_, [])      <= [];
+takeWhile (p, x :: xs) <= if p x 
+                          then x :: takeWhile (p, xs) 
+                          else [];
 
 unique : list alpha -> list alpha;
 unique []        <= [];
@@ -244,62 +333,7 @@ unique (x :: xs) <= if member (x, xs)
                     then unique xs 
                     else x :: unique xs;
 
-quotRem : num # num -> (num # num);
-quotRem (a,b) <= (a div b, a mod b);
-
-fst : (alpha # beta) -> alpha;
-fst (x,_) <= x;
-
-snd : (alpha # beta) -> beta;
-snd (_,y) <= y;
-
-isUpper : char -> truval;
-isUpper c <= 'A' =< c and c =< 'Z';
-
-isLower : char -> truval;
-isLower c <= 'a' =< c and c =< 'z';
-
-isAlpha : char -> truval;
-isAlpha c <= isUpper c or isLower c;
-
-isDigit : char -> truval;
-isDigit c <= '0' =< c and c =< '9';
-
-isHexDigit : char -> truval;
-isHexDigit c <= isDigit c or 'a' =< c and c =< 'f' or 'A' =< c and c =< 'F';
-
-isOctDigit : char -> truval;
-isOctDigit c <= isDigit c or '0' =< c and c =< '7';
-
-isAlphaNum : char -> truval;
-isAlphaNum c <= isAlpha c or isDigit c;
-
-isSpace : char -> truval;
-isSpace c <= c = ' ' or c = '\t' or c = '\n';
-
-isGraph : char -> truval;
-isGraph c <= ' ' =< c and c =< '~';
-
-isPunct : char -> truval;
-isPunct c <= isGraph c and c /= ' ' and not (isAlphaNum c);
-
-isAscii : char -> truval;
-isAscii c <= ord c < 128;
-
-isControl : char -> truval;
-isControl c <= isAscii c and not (isGraph c);
-
-toLower : char -> char;
-toLower c <= if isUpper c then chr (ord c + 32) else c;
-
-toUpper : char -> char;
-toUpper c <= if isLower c then chr (ord c - 32) else c;
-
-digitToInt : char -> num;
-digitToInt x <= ord x - 48;
-
-digitToChar : num -> char;
-digitToChar x <= chr (x + 48);
-
-charToInt : char -> num;
-charToInt x <= ord (x);
+zip : list alpha # list beta -> list (alpha # beta);
+zip ([], _)            <= [];
+zip (_, [])            <= [];
+zip (x :: xs, y :: ys) <= (x, y) :: zip (xs, ys);

@@ -244,7 +244,7 @@ filtra' <= filter;
 !     mapConj((\x => 6 - x),1..4) = [2, 3, 4, 5]
 
 mapConj : (alpha -> alpha) # list alpha -> list alpha;
-mapConj (f, c) <= sort (map (c, f));
+mapConj (f, c) <= sort (map (f, c));
 
 ! 8.12 - Igualdade de conjuntos
 ! =============================

@@ -67,7 +67,7 @@ repeteFinito' (n, x) <= take (n, repete x);
 !    potenciasMenores(4,1000) = [4,16,64,256]
 
 potenciasMenores : num # num -> list num;
-potenciasMenores (x, y) <= takeWhile' ((< y), map (from 1, \a => pow (x, a)));
+potenciasMenores (x, y) <= takeWhile' ((< y), map (\a => pow (x, a), from 1));
 
 ! 7.3 - Agrupamento de elementos consecutivos
 ! ===========================================
@@ -300,7 +300,7 @@ somaPrimosMenores' n <= sum (takeWhile' ((< n), primos));
 !    take(10,elos(2,7,25)) = [2,9,16,23,5,12,19,1,8,15]
 
 elos : num # num # num -> list num;
-elos (i, d, n) <= map (from 0, \j => (i + d * j) mod n);
+elos (i, d, n) <= map (\j => (i + d * j) mod n, from 0);
 
 ! (Exercício 7.8.2) Definir a função numeroDeVoltas tal que
 ! numeroDeVoltas(i,d,n) seja a quantidade de voltas dadas até que a
@@ -319,7 +319,7 @@ numeroDeVoltas (i, d, n) <= length (takeWhile' ((/= 0), elos (i, d, n)));
 !    take(7,fatoriais) = [1,1,2,6,24,120,720]
 
 fatoriais : list num;
-fatoriais <= map (from 0, fatorial);
+fatoriais <= map (fatorial, from 0);
 
 ! (Exercício 7.9.2) Definir a função ehFatorial tal que [ehFatorial(m)]
 ! verifique se dado um número natural m este é o resultado de um valor

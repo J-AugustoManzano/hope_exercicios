@@ -109,7 +109,7 @@ superPar2 n <= filter (even, digitos n) = digitos n;
 !    filtraAplica1((4+), (<3), 1..7) = [5,6]
 
 filtraAplica1 : (num -> num) # (num -> truval) # list num -> list num;
-filtraAplica1 (f, p, xs) <= map (filter (p, xs), f);
+filtraAplica1 (f, p, xs) <= map (f, filter (p, xs));
 
 ! (Exercício 6.7.2) Definir por recursão a função filtraAplica2 tal que
 ! filtraAplica2(f,p,[xs]) seja a lista de elementos numéricos obtida
@@ -365,7 +365,7 @@ bezout (a, b) <= (y, x - q * y)
 
 diofantica : num -> list num;
 diofantica 1 <= [1];
-diofantica n <= 2 :: map (diofantica (n - 1), (2 *));
+diofantica n <= 2 :: map ((2 *), diofantica (n - 1));
 
 ! (Exercício 6.19.2) Definir a função ehDiofantica tal que
 ! ehDiofantica([xs]) verifique se a soma dos inversos de xs é igual a
@@ -375,4 +375,4 @@ diofantica n <= 2 :: map (diofantica (n - 1), (2 *));
 !    ehDiofantica(diofantica(5)) = true
 
 ehDiofantica : list num -> truval;
-ehDiofantica xs <= sum (map (xs, (1 /))) = 1;
+ehDiofantica xs <= sum (map ((1 /), xs)) = 1;

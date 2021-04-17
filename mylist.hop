@@ -12,6 +12,10 @@
 ! sítio: manzano.pro.br - Selecione "DOWNLOADS" e escolha !
 ! o material desejado.                                    !
 !                                                         !
+! José A. Alonso Jiménez e José Augusto N. G. Manzano     !
+!                                                         !
+! Versão 2.0 - Abril de 2021                              !
+!                                                         !
 ! .*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*. !
 
 
@@ -267,9 +271,9 @@ minimum (x :: y :: xs) <= if x < y
                           then minimum (x :: xs) 
                           else minimum (y :: xs);
 
-map : list alpha # (alpha -> beta) -> list beta;
-map ([], _)      <= [];
-map (x :: xs, f) <= f x :: map (xs, f);
+map : (alpha -> beta) # list alpha -> list beta;
+map (_, [])      <= [];
+map (f, x :: xs) <= f x :: map (f, xs);
 
 null : list alpha -> truval;
 null []     <= true;

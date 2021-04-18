@@ -12,10 +12,6 @@
 ! sítio: manzano.pro.br - Selecione "DOWNLOADS" e escolha !
 ! o material desejado.                                    !
 !                                                         !
-! José A. Alonso Jiménez e José Augusto N. G. Manzano     !
-!                                                         !
-! Versão 2.0 - Abril de 2021                              !
-!                                                         !
 ! .*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*. !
 
 
@@ -52,6 +48,7 @@ from (n) <= if n > 140000
             then error ("Maximum limit to infinity: 140000")
             else n .. 140000;
 
+ 
 const : alpha -> beta -> alpha;
 const x _ <= x;
 
@@ -111,7 +108,6 @@ isAlpha c <= isLower c or isUpper c;
 
 isDigit : char -> truval;
 isDigit c <= '0' =< c and c =< '9';
-
 isAlphaNum : char -> truval;
 isAlphaNum c <= isAlpha c or isDigit c;
 
@@ -170,6 +166,7 @@ comp (x :: xs, f) <= if f x
                      then x :: comp (xs, f)
                      else comp (xs, f);
                      
+ 
 concat : list (list alpha) -> list alpha;
 concat []        <= [];
 concat (x :: xs) <= x <> concat xs;
@@ -229,7 +226,6 @@ foldr (f, v, x :: xs) <= f (x, foldr (f, v, xs));
 
 concat2lst : list alpha # list alpha -> list alpha;
 concat2lst (xs, ys) <= foldr ((::), ys, xs);
-
 head : list alpha -> alpha;
 head []       <= error ("Empty list!");
 head (x :: _) <= x;
@@ -287,6 +283,7 @@ range (i, f, p) <= if i > f
                    then [] 
                    else i :: range (i + p, f, p);
 
+ 
 reduce : list alpha # (alpha # alpha -> alpha) # alpha -> alpha;
 reduce ([], f, n)      <= n;
 reduce (x :: xs, f, n) <= f (x, reduce (xs, f, n));
